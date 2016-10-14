@@ -3,6 +3,7 @@ package com.tapptitude.weatherforecast;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -150,11 +151,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadNotificationWeatherData() {
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(this)
                 .setContentTitle(mForecastWeatherData.city.name + " " + (int) mPresentWeatherData.main.temp + "°C")
                 .setContentText(mPresentWeatherData.weather.get(0).description)
                 .setSmallIcon(R.drawable.weather_small_icon)
+                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0))
+                .setAutoCancel(true)
                 .setOngoing(true)
                 .build();
 
