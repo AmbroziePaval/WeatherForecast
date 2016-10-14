@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.tapptitude.weatherforecast.activities.LocationPickerActivity;
 import com.tapptitude.weatherforecast.fragments.WeatherItemListFragment;
+import com.tapptitude.weatherforecast.json.owm_current_weather.CurrentWeatherData;
 import com.tapptitude.weatherforecast.json.owm_forecast.ForecastWeatherData;
 import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     static final String STATE_LATITUDE = "latitude";
     static final String STATE_LONGITUDE = "longitude";
     private WeatherItemListFragment mWeatherItemListFragment;
-    private WeatherData mPresentWeatherData;
+    private CurrentWeatherData mCurrentWeatherData;
     private ForecastWeatherData mForecastWeatherData;
     private FloatingActionButton mChooseLocationFAB;
     private String mLongitude = "23.6006";
@@ -107,10 +108,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ForecastWeatherData> call, Response<ForecastWeatherData> response) {
                 mForecastWeatherData = response.body();
-                mPresentWeatherData = mForecastWeatherData.list.get(0);
                 loadPresentWeatherData();
                 mPreviousLocationDbHelper.insertLocation(mForecastWeatherData.city.name, mLongitude, mLatitude);
-                loadNotificationWeatherData();
 
                 mWeatherItemListFragment = new WeatherItemListFragment();
                 Bundle bundle = new Bundle();
@@ -143,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 if (!todayIncluded) {
-                    displayWeather.add(0, mPresentWeatherData);
+                    displayWeather.add(0, mForecastWeatherData.list.get(0));
                 }
                 return displayWeather;
             }
@@ -155,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Notification notification = new Notification.Builder(this)
-                .setContentTitle(mForecastWeatherData.city.name + " " + (int) mPresentWeatherData.main.temp + "°C")
-                .setContentText(mPresentWeatherData.weather.get(0).description)
+                .setContentTitle(mForecastWeatherData.city.name + " " + (int) mCurrentWeatherData.main.temp + "°C")
+                .setContentText(mCurrentWeatherData.weather.get(0).description)
                 .setSmallIcon(R.drawable.weather_small_icon)
                 .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0))
                 .setAutoCancel(true)
@@ -167,29 +166,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadPresentWeatherData() {
-        TextView temp = (TextView) findViewById(R.id.am_tv_temp);
-        TextView tempMinValue = (TextView) findViewById(R.id.am_tv_tempMinValue);
-        TextView tempMaxValue = (TextView) findViewById(R.id.am_tv_tempMaxValue);
-        TextView city = (TextView) findViewById(R.id.am_tv_city);
-        TextView country = (TextView) findViewById(R.id.am_tv_country);
-        ImageView weatherIcon = (ImageView) findViewById(R.id.am_iv_weather_icon);
-        TextView humidity = (TextView) findViewById(R.id.am_tv_humidity);
-        TextView pressure = (TextView) findViewById(R.id.am_tv_pressure);
-        TextView windSpeed = (TextView) findViewById(R.id.am_tv_wind_speed);
-        TextView windDeg = (TextView) findViewById(R.id.am_tv_wind_deg);
+        final TextView temp = (TextView) findViewById(R.id.am_tv_temp);
+        final TextView tempMinValue = (TextView) findViewById(R.id.am_tv_tempMinValue);
+        final TextView tempMaxValue = (TextView) findViewById(R.id.am_tv_tempMaxValue);
+        final TextView city = (TextView) findViewById(R.id.am_tv_city);
+        final TextView country = (TextView) findViewById(R.id.am_tv_country);
+        final ImageView weatherIcon = (ImageView) findViewById(R.id.am_iv_weather_icon);
+        final TextView humidity = (TextView) findViewById(R.id.am_tv_humidity);
+        final TextView pressure = (TextView) findViewById(R.id.am_tv_pressure);
+        final TextView windSpeed = (TextView) findViewById(R.id.am_tv_wind_speed);
+        final TextView windDeg = (TextView) findViewById(R.id.am_tv_wind_deg);
 
-        temp.setText(String.valueOf(Math.round(mPresentWeatherData.main.temp)) + "°C");
-        tempMinValue.setText(String.valueOf(Math.round(mPresentWeatherData.main.tempMin)) + "°C");
-        tempMaxValue.setText(String.valueOf(Math.round(mPresentWeatherData.main.tempMax)) + "°C");
-        city.setText(mForecastWeatherData.city.name);
-        country.setText(mForecastWeatherData.city.country);
-        humidity.setText(String.valueOf(mPresentWeatherData.main.humidity) + "%");
-        pressure.setText(String.valueOf(mPresentWeatherData.main.pressure) + "hPa");
-        windSpeed.setText(String.valueOf(mPresentWeatherData.wind.speed) + "m/s");
-        windDeg.setText(String.valueOf(mPresentWeatherData.wind.degrees));
+        WeatherApiInterface weatherApiInterface = WeatherApiClient.getClient().create(WeatherApiInterface.class);
+        Call<CurrentWeatherData> call = weatherApiInterface.getCurrentWeatherData(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude), "metric", getResources().getString(R.string.API_KEY));
+        call.enqueue(new Callback<CurrentWeatherData>() {
+            @Override
+            public void onResponse(Call<CurrentWeatherData> call, Response<CurrentWeatherData> response) {
+                mCurrentWeatherData = response.body();
+                loadNotificationWeatherData();
 
-        Glide.with(getApplicationContext()).load(WeatherApiClient.getImageUrl(mPresentWeatherData.weather.get(0).icon))
-                .into(weatherIcon);
+                temp.setText(String.valueOf(Math.round(mCurrentWeatherData.main.temp)) + "°C");
+                tempMinValue.setText(String.valueOf(Math.round(mCurrentWeatherData.main.tempMin)) + "°C");
+                tempMaxValue.setText(String.valueOf(Math.round(mCurrentWeatherData.main.tempMax)) + "°C");
+                city.setText(mForecastWeatherData.city.name);
+                country.setText(mForecastWeatherData.city.country);
+                humidity.setText(String.valueOf(mCurrentWeatherData.main.humidity) + "%");
+                pressure.setText(String.valueOf(mCurrentWeatherData.main.pressure) + "hPa");
+                windSpeed.setText(String.valueOf(mCurrentWeatherData.wind.speed) + "m/s");
+                windDeg.setText(String.valueOf(mCurrentWeatherData.wind.degrees));
+
+                Glide.with(getApplicationContext()).load(WeatherApiClient.getImageUrl(mCurrentWeatherData.weather.get(0).icon))
+                        .into(weatherIcon);
+            }
+
+            @Override
+            public void onFailure(Call<CurrentWeatherData> call, Throwable t) {
+                Log.d(TAG, "OpenWeatherMap current data collection failed");
+            }
+        });
     }
 
     @Override
