@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             loadOpenWeatherMapData();
-            Toast.makeText(context, "Weather updated!", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Weather updated!", Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -246,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadOpenWeatherMapData();
+                Toast.makeText(v.getContext(), "Weather updated!", Toast.LENGTH_SHORT).show();
             }
         });
 
