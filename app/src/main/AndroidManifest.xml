@@ -26,7 +26,7 @@
         </activity>
         <activity android:name=".activities.WeatherItemDetailActivity"/>
         <activity android:name=".activities.LocationPickerActivity"/>
-        <receiver  android:process=":remote" android:name=".MainActivity$Updater"/>
+        <receiver  android:process=":remote" android:name=".UpdateWeatherBR"/>
     </application>
 
 </manifest>

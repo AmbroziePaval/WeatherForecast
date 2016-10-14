@@ -1,14 +1,12 @@
 package com.tapptitude.weatherforecast;
 
 import android.app.Activity;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
@@ -57,14 +55,15 @@ public class MainActivity extends AppCompatActivity {
     private Button mPreviousLocationButton;
     private PopupMenu mLocationPopupMenu;
     private PreviousLocationDbHelper mPreviousLocationDbHelper;
-    private Updater updater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        updater = new Updater();
-        Updater.startUpdater(this);
+        mChooseLocationFAB = (FloatingActionButton) findViewById(R.id.am_fab);
+        mRefreshButton = (Button) findViewById(R.id.am_b_refresh);
+        mPreviousLocationButton = (Button) findViewById(R.id.am_b_previous_location);
+        setOnClickListeners();
 
         if (savedInstanceState != null) {
             mLongitude = savedInstanceState.getString(STATE_LONGITUDE);
@@ -74,15 +73,22 @@ public class MainActivity extends AppCompatActivity {
         loadOpenWeatherMapData();
         mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
 
-        mChooseLocationFAB = (FloatingActionButton) findViewById(R.id.am_fab);
-        mRefreshButton = (Button) findViewById(R.id.am_b_refresh);
-        mPreviousLocationButton = (Button) findViewById(R.id.am_b_previous_location);
-        setOnClickListeners();
+        UpdateWeatherBR.startUpdater(this);
+        registerReceiver(broadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
     }
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadOpenWeatherMapData();
+            Toast.makeText(context, "Weather updated!", Toast.LENGTH_LONG).show();
+        }
+    };
 
     @Override
     protected void onDestroy() {
-        Updater.cancelUpdater(this);
+        UpdateWeatherBR.cancelUpdater(this);
+        unregisterReceiver(broadcastReceiver);
         super.onDestroy();
     }
 
@@ -113,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.am_fl_frameLayout, mWeatherItemListFragment);
-                transaction.commit();
+                transaction.commitAllowingStateLoss();
 
                 Log.d(TAG, "OpenWeatherMap data received");
             }
@@ -259,26 +265,5 @@ public class MainActivity extends AppCompatActivity {
                 mLocationPopupMenu.show();
             }
         });
-    }
-
-    public static class Updater extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Weather updated!", Toast.LENGTH_LONG).show();
-        }
-
-        public static void startUpdater(Context context){
-            Intent intent = new Intent(context, Updater.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 1000 * 60, pendingIntent);
-        }
-
-        public static void cancelUpdater(Context context){
-            Intent intent = new Intent(context, Updater.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
-        }
     }
 }
