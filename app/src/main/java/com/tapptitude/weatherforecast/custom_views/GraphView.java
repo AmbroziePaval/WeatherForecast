@@ -220,7 +220,7 @@ public class GraphView extends View {
         mGraphItemList = new ArrayList<>();
         for (WeatherData weatherData : mWeatherDataList) {
             GraphItem graphItem = new GraphItem();
-            graphItem.temp = (int) weatherData.main.temp;
+            graphItem.temp = (int) Math.round(weatherData.main.temp);
             graphItem.color = TemperatureColorPicker.getTemperatureColor(graphItem.temp);
             graphItem.time = WeatherDateUtils.getTimeStringFromWeatherData(weatherData.timeOfCalculation);
             mGraphItemList.add(graphItem);
