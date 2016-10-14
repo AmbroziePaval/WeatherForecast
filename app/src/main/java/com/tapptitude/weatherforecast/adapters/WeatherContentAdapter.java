@@ -52,7 +52,7 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
     public void onBindViewHolder(final WeatherContentViewHolder holder, int position) {
         WeatherData weatherData = displayWeatherList.get(position);
 
-        String tempText = String.valueOf((int) weatherData.main.temp) + "°C";
+        String tempText = String.valueOf(Math.round(weatherData.main.temp)) + "°C";
         holder.mWeatherTempTV.setText(tempText);
 
         holder.mWeatherDayTV.setText(WeatherDateUtils.getDayOfCalculation(weatherData.timeOfCalculation));
@@ -69,7 +69,7 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
 
         holder.mGraphView.setMWeatherDataList(getWeatherDataFromSameDay(displayWeatherList.get(position)));
 
-        holder.mWeatherCardCV.setBackground(TemperatureColorPicker.getTemperatureColorGradient270Deg((int) weatherData.main.temp));
+        holder.mWeatherCardCV.setBackground(TemperatureColorPicker.getTemperatureColorGradient270Deg((int) Math.round(weatherData.main.temp)));
 //        holder.mWeatherCardCV.setCardBackgroundColor(TemperatureColorPicker.getTemperatureColor((int) weatherData.main.temp));
         holder.mWeatherCardCV.setOnClickListener(new View.OnClickListener() {
             @Override

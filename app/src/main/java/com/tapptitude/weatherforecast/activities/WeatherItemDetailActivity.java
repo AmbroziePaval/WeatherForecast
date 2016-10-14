@@ -102,10 +102,10 @@ public class WeatherItemDetailActivity extends Activity {
             e.printStackTrace();
         }
 
-        mllMain.setBackground(TemperatureColorPicker.getTemperatureColorGradientInverted((int) mWeatherData.main.temp));
-        mTemp.setText(String.valueOf((int) mWeatherData.main.temp) + "°C");
-        mTempMin.setText(String.valueOf((int) mWeatherData.main.tempMin) + "°C");
-        mTempMax.setText(String.valueOf((int) mWeatherData.main.tempMax) + "°C");
+        mllMain.setBackground(TemperatureColorPicker.getTemperatureColorGradientInverted((int) Math.round(mWeatherData.main.temp)));
+        mTemp.setText(String.valueOf(Math.round(mWeatherData.main.temp)) + "°C");
+        mTempMin.setText(String.valueOf(Math.round(mWeatherData.main.tempMin)) + "°C");
+        mTempMax.setText(String.valueOf(Math.round(mWeatherData.main.tempMax)) + "°C");
         mDescription.setText(mWeatherData.weather.get(0).description);
         mHumidity.setText(String.valueOf(mWeatherData.main.humidity) + "%");
         mCloudiness.setText(String.valueOf(mWeatherData.clouds.all) + "%");
