@@ -1,0 +1,13 @@
+<resources>
+    <string name="API_KEY">d6c049e8ed30d76f09132f2167e8745e</string>
+    <string name="app_name">WeatherForecast</string>
+    <string name="condition_image">Condition Image</string>
+    <string name="deleteItemString">x</string>
+    <string name="longFillingString">Details details …</string>
+    <string name="swipe_left">swipe left</string>
+    <string name="swipe_right">swipe right</string>
+    <string name="details">Details</string>
+    <string name="remove">Remove</string>
+    <string name="tablet">false</string>
+    <string name="getLocation">Choose location</string>
+</resources>

@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:orientation="vertical"
+    tools:context="com.tapptitude.weatherforecast.MainActivity">
+
+    <LinearLayout
+        android:id="@+id/am_rl_presentForecast"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/am_tv_temp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:textAlignment="center"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:text="6°C" />
+
+            <ImageView
+                android:id="@+id/am_iv_weather_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                tools:src="@drawable/w01d" />
+
+            <Button
+                android:id="@+id/am_b_previous_location"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/previous_location"
+                android:textAlignment="viewEnd"
+                android:textAllCaps="false"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2">
+
+            <TextView
+                android:id="@+id/am_tv_tempMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Min:" />
+
+            <TextView
+                android:id="@+id/am_tv_tempMinValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/am_tv_tempMin"
+                tools:text="6°C" />
+
+            <TextView
+                android:id="@+id/am_tv_tempMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/am_tv_tempMinValue"
+                android:text=" | Max:" />
+
+            <TextView
+                android:id="@+id/am_tv_tempMaxValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/am_tv_tempMax"
+                tools:text="10°C" />
+
+            <TextView
+                android:id="@+id/am_tv_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="10dp"
+                tools:text="Cluj-Napoca" />
+
+            <TextView
+                android:id="@+id/am_tv_country"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/am_tv_city"
+                android:layout_marginEnd="10dp"
+                tools:text="Romania" />
+
+            <RelativeLayout
+                android:id="@+id/am_rl_time_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true">
+
+                <TextClock
+                    android:id="@+id/am_tc_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:format12Hour="k:mm"
+                    android:format24Hour="k:mm"
+                    android:textSize="40sp" />
+
+                <TextClock
+                    android:id="@+id/am_tc_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/am_tc_time"
+                    android:layout_centerHorizontal="true"
+                    android:format12Hour="EEEE, MMM dd, yyyy"
+                    android:format24Hour="EEEE, MMM dd, yyyy" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/am_rl_details"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="3dp"
+            android:layout_weight="1.5"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/am_iv_humidity_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/humidity" />
+
+                <TextView
+                    android:id="@+id/am_tv_humidity_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_iv_humidity_icon"
+                    android:layout_centerHorizontal="true"
+                    android:text="Humidity"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/am_tv_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_tv_humidity_txt"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    tools:text="70" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/am_iv_pressure_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/pressure" />
+
+                <TextView
+                    android:id="@+id/am_tv_pressure_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_iv_pressure_icon"
+                    android:layout_centerHorizontal="true"
+                    android:text="Pressure"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/am_tv_pressure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_tv_pressure_txt"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    tools:text="70" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/am_iv_wind_speed_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/wind_speed" />
+
+                <TextView
+                    android:id="@+id/am_tv_wind_speed_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_iv_wind_speed_icon"
+                    android:layout_centerHorizontal="true"
+                    android:text="Wind speed"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/am_tv_wind_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_tv_wind_speed_txt"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    tools:text="70" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageView
+                    android:id="@+id/am_iv_wind_deg_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/wind_deg" />
+
+                <TextView
+                    android:id="@+id/am_tv_wind_deg_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_iv_wind_deg_icon"
+                    android:layout_centerHorizontal="true"
+                    android:text="Wind degrees"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/am_tv_wind_deg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/am_tv_wind_deg_txt"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="12sp"
+                    tools:text="70" />
+
+                <Button
+                    android:id="@+id/am_b_refresh"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="40dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/refresh"
+                    android:textAlignment="viewEnd"
+                    android:textAllCaps="false"
+                    android:textSize="12sp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/am_fl_frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4">
+
+        <include layout="@layout/weather_item_list" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/am_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|bottom"
+            android:layout_margin="6dp"
+            android:src="@drawable/gmap_icon"
+            app:backgroundTint="@color/colorFAB" />
+    </FrameLayout>
+
+
+</LinearLayout>
