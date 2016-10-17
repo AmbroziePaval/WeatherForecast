@@ -7,5 +7,5 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Rain {
     @SerializedName("3h")
-    public int rain3h;
+    public double rain3h;
 }
