@@ -16,7 +16,6 @@ import com.tapptitude.weatherforecast.R;
 import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.utils.TemperatureColorPicker;
-import com.tapptitude.weatherforecast.utils.WeatherConditionPicturePicker;
 import com.tapptitude.weatherforecast.custom_views.GraphView;
 
 import java.text.ParseException;
