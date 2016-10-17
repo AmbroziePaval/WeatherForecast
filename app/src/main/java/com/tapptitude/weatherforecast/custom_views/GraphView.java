@@ -238,9 +238,6 @@ public class GraphView extends View {
         return mLastClickedGraphItem;
     }
 
-    /**
-     * Created by ambroziepaval on 10/10/16.
-     */
     public static class GraphItem {
         public int x;
         public int y;

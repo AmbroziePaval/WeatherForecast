@@ -29,11 +29,9 @@ import java.io.ByteArrayOutputStream;
  * Created by ambroziepaval on 10/3/16.
  */
 public class LocationPickerActivity extends Activity implements OnMapReadyCallback, View.OnClickListener {
-    private Button mPickLocationB;
     private GoogleMap mMap;
     private LatLng mCenterPosition;
     private LatLng mDeviceLocation;
-    private LocationManager mLocationManager;
     private String mLongitude = "23.6006";
     private String mLatitude = "46.7595";
 
@@ -48,23 +46,23 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.alp_f_map);
         mapFragment.getMapAsync(this);
-        mPickLocationB = (Button) findViewById(R.id.alp_b_chooseLocation);
-        mPickLocationB.setOnClickListener(this);
+        Button pickLocationB = (Button) findViewById(R.id.alp_b_chooseLocation);
+        pickLocationB.setOnClickListener(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                     MyLocationListener.MY_PERMISSION_ACCESS_LOCATION);
         }
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
-        Location deviceLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+        Location deviceLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (deviceLocation != null) {
             mDeviceLocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
             updateDeviceLocation();

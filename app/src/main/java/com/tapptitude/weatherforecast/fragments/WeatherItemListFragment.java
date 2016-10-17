@@ -26,11 +26,11 @@ public class WeatherItemListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.weather_item_list, container, false);
 
-        RecyclerView mWeatherForecastRV = (RecyclerView) view.findViewById(R.id.wil_rv_weatherItemList);
-
         Bundle bundle = getArguments();
         ArrayList<WeatherData> mWeatherDataArrayList = bundle.getParcelableArrayList("all_weather_data");
         ArrayList<WeatherData> mDisplayWeatherList = bundle.getParcelableArrayList("display_weather");
+
+        RecyclerView mWeatherForecastRV = (RecyclerView) view.findViewById(R.id.wil_rv_weatherItemList);
 
         WeatherContentAdapter weatherAdapter = new WeatherContentAdapter(getContext(), getFragmentManager(), mWeatherDataArrayList, mDisplayWeatherList);
         mWeatherForecastRV.setAdapter(weatherAdapter);

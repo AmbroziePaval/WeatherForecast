@@ -56,6 +56,7 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
         holder.mWeatherTempTV.setText(tempText);
 
         holder.mWeatherDayTV.setText(WeatherDateUtils.getDayOfCalculation(weatherData.timeOfCalculation));
+
         String timeText;
         if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
             timeText = "Today " + WeatherDateUtils.getTimeStringFromWeatherData(weatherData.timeOfCalculation);

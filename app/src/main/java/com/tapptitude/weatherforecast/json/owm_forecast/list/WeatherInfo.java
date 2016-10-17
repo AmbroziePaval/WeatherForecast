@@ -6,8 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by ambroziepaval on 10/5/16.
  */
-public class WeatherInfo implements Parcelable
-{
+public class WeatherInfo implements Parcelable {
     public int id;
     public String main;
     public String description;
