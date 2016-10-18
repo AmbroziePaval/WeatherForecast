@@ -10,4 +10,25 @@
     <string name="remove">Remove</string>
     <string name="tablet">false</string>
     <string name="getLocation">Choose location</string>
+    <string name="wind_speed">Wind speed</string>
+    <string name="wind_degrees">Wind degrees</string>
+    <string name="pressure">Pressure</string>
+    <string name="humidity">Humidity</string>
+    <string name="min">Min:</string>
+    <string name="max">| Max:</string>
+    <string name="wind_degree_icon">Wind degree icon</string>
+    <string name="wind_speed_icon">Wind speed icon</string>
+    <string name="air_pressure">Air pressure</string>
+    <string name="humidity_icon">Humidity icon</string>
+    <string name="calculation_time">Calculation time:</string>
+    <string name="sea_level">- sea level:</string>
+    <string name="ground_level">- ground level:</string>
+    <string name="pressureDetails">Pressure:</string>
+    <string name="wind_degrees_details">Wind degrees:</string>
+    <string name="wind_speed_details">Wind speed:</string>
+    <string name="cloudiness">Cloudiness:</string>
+    <string name="humidity_details">Humidity:</string>
+    <string name="description">Description:</string>
+    <string name="max_temp">Max Temp</string>
+    <string name="min_temp">Min Temp</string>
 </resources>

@@ -72,7 +72,7 @@
                     android:id="@+id/awd_tv_temp_min"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Min Temp"
+                    android:text="@string/min_temp"
                     android:textSize="12sp" />
 
                 <TextView
@@ -97,7 +97,7 @@
                     android:id="@+id/awd_tv_temp_max"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Max Temp"
+                    android:text="@string/max_temp"
                     android:textSize="12sp" />
 
                 <TextView
@@ -123,7 +123,7 @@
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Description: "/>
+            android:text="@string/description"/>
 
         <TextView
             android:id="@+id/awd_tv_description_value"
@@ -141,7 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/awd_tv_description"
-            android:text="Humidity: "/>
+            android:text="@string/humidity_details"/>
 
         <TextView
             android:id="@+id/awd_tv_humidity_value"
@@ -159,7 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/awd_tv_humidity"
-            android:text="Cloudiness: "/>
+            android:text="@string/cloudiness"/>
 
         <TextView
             android:id="@+id/awd_tv_cloudiness_value"
@@ -177,7 +177,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/awd_tv_cloudiness"
-            android:text="Wind speed: "/>
+            android:text="@string/wind_speed_details"/>
 
         <TextView
             android:id="@+id/awd_tv_wind_speed_value"
@@ -196,7 +196,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/awd_tv_wind_speed_value"
             android:layout_below="@+id/awd_tv_cloudiness"
-            android:text="Wind degrees: "/>
+            android:text="@string/wind_degrees_details"/>
 
         <TextView
             android:id="@+id/awd_tv_wind_deg_value"
@@ -214,7 +214,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/awd_tv_wind_speed"
-            android:text="Pressure: "/>
+            android:text="@string/pressureDetails"/>
 
         <TextView
             android:id="@+id/awd_tv_pressure_value"
@@ -233,7 +233,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/awd_tv_pressure_value"
             android:layout_below="@+id/awd_tv_wind_speed"
-            android:text="- ground level: "/>
+            android:text="@string/ground_level"/>
 
         <TextView
             android:id="@+id/awd_tv_ground_pressure_value"
@@ -252,7 +252,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/awd_tv_ground_pressure_value"
             android:layout_below="@+id/awd_tv_wind_speed"
-            android:text="- sea level: "/>
+            android:text="@string/sea_level"/>
 
         <TextView
             android:id="@+id/awd_tv_sea_pressure_value"
@@ -270,7 +270,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/awd_tv_pressure"
-            android:text="Calculation time: "/>
+            android:text="@string/calculation_time"/>
 
         <TextView
             android:id="@+id/awd_tv_sea_time_calc_value"

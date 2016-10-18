@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Min:" />
+                android:text="@string/min" />
 
             <TextView
                 android:id="@+id/am_tv_tempMinValue"
@@ -79,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/am_tv_tempMinValue"
-                android:text=" | Max:" />
+                android:text="@string/max" />
 
             <TextView
                 android:id="@+id/am_tv_tempMaxValue"
@@ -138,7 +138,8 @@
             android:layout_height="0dp"
             android:layout_margin="3dp"
             android:layout_weight="1.5"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <RelativeLayout
                 android:layout_width="0dp"
@@ -150,7 +151,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/humidity" />
+                    android:src="@drawable/humidity"
+                    android:contentDescription="@string/humidity_icon" />
 
                 <TextView
                     android:id="@+id/am_tv_humidity_txt"
@@ -158,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/am_iv_humidity_icon"
                     android:layout_centerHorizontal="true"
-                    android:text="Humidity"
+                    android:text="@string/humidity"
                     android:textSize="12sp" />
 
                 <TextView
@@ -182,7 +184,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/pressure" />
+                    android:src="@drawable/pressure"
+                    android:contentDescription="@string/air_pressure"/>
 
                 <TextView
                     android:id="@+id/am_tv_pressure_txt"
@@ -190,7 +193,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/am_iv_pressure_icon"
                     android:layout_centerHorizontal="true"
-                    android:text="Pressure"
+                    android:text="@string/pressure"
                     android:textSize="12sp" />
 
                 <TextView
@@ -213,7 +216,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/wind_speed" />
+                    android:src="@drawable/wind_speed"
+                    android:contentDescription="@string/wind_speed_icon"/>
 
                 <TextView
                     android:id="@+id/am_tv_wind_speed_txt"
@@ -221,7 +225,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/am_iv_wind_speed_icon"
                     android:layout_centerHorizontal="true"
-                    android:text="Wind speed"
+                    android:text="@string/wind_speed"
                     android:textSize="12sp" />
 
                 <TextView
@@ -244,7 +248,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerHorizontal="true"
-                    android:src="@drawable/wind_deg" />
+                    android:src="@drawable/wind_deg"
+                    android:contentDescription="@string/wind_degree_icon"/>
 
                 <TextView
                     android:id="@+id/am_tv_wind_deg_txt"
@@ -252,7 +257,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/am_iv_wind_deg_icon"
                     android:layout_centerHorizontal="true"
-                    android:text="Wind degrees"
+                    android:text="@string/wind_degrees"
                     android:textSize="12sp" />
 
                 <TextView

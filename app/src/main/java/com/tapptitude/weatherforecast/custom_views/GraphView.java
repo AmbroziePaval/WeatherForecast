@@ -163,11 +163,11 @@ public class GraphView extends View {
 
     private void drawTemps(Canvas canvas) {
         for (GraphItem graphItem : mGraphItemList) {
-            if (!minimalisticInfo) {
-                mTempPaint.setColor(graphItem.color);
-            } else {
+//            if (!minimalisticInfo) {
+//                mTempPaint.setColor(graphItem.color);
+//            } else {
                 mTempPaint.setColor(Color.BLACK);
-            }
+//            }
             canvas.drawText(String.valueOf(graphItem.temp) + "°C", graphItem.x, graphItem.y - 10 * mDensityPixel, mTempPaint);
         }
     }
