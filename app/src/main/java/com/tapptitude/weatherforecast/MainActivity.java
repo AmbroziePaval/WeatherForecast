@@ -172,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
                 mTempTV.setText(getResources().getString(R.string.details_temperature_x, (int) Math.round(mCurrentWeatherData.main.temp)));
                 mTempMinValueTV.setText(getResources().getString(R.string.details_temperature_x, Math.round(mCurrentWeatherData.main.tempMin)));
                 mTempMaxValueTV.setText(getResources().getString(R.string.details_temperature_x, Math.round(mCurrentWeatherData.main.tempMax)));
-                mCityTV.setText(mForecastWeatherData.city.name);
-                mCountryTV.setText(mForecastWeatherData.city.country);
+                mCityTV.setText(mCurrentWeatherData.cityName);
+                mCountryTV.setText(mCurrentWeatherData.sys.country);
                 mHumidityTV.setText(getResources().getString(R.string.details_humidity_x, mCurrentWeatherData.main.humidity));
                 mPressureTV.setText(getResources().getString(R.string.details_pressure_x, mCurrentWeatherData.main.pressure));
                 mWindSpeedTV.setText(getResources().getString(R.string.details_wind_speed_x, mCurrentWeatherData.wind.speed));
