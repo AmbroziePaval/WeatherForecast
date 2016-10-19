@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 this.mLongitude = String.valueOf(longitude);
 
                 loadOpenWeatherMapData();
+                loadPresentWeatherData();
 
                 String toastText = getResources().getString(R.string.main_coordinates_info_x, latitude, longitude);
                 Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
