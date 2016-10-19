@@ -104,11 +104,11 @@ public class MainActivity extends AppCompatActivity {
         mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
 
         setAutomaticWeatherUpdater();
+        UpdateWeatherBR.startUpdater(this);
+        registerReceiver(mWeatherBroadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
     }
 
     private void setAutomaticWeatherUpdater() {
-        UpdateWeatherBR.startUpdater(this);
-        registerReceiver(mWeatherBroadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
         mWeatherBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -121,7 +121,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         UpdateWeatherBR.cancelUpdater(this);
-        unregisterReceiver(mWeatherBroadcastReceiver);
+        try {
+            unregisterReceiver(mWeatherBroadcastReceiver);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Weather broadcast receiver not registered");
+        }
         super.onDestroy();
     }
 
