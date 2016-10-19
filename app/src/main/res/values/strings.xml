@@ -40,4 +40,5 @@
     <string name="main_selected_location_x">Location selected: %s</string>
     <string name="main_weather_updated">Weather updated!</string>
     <string name="main_location_selection_failed">Location selection failed!</string>
+    <string name="main_Notification_title_x">%1$s %2$d°C</string>
 </resources>

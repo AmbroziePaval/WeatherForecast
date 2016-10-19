@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         loadOpenWeatherMapData();
+        loadPresentWeatherData();
         mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
 
         setAutomaticWeatherUpdater();
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ForecastWeatherData> call, Response<ForecastWeatherData> response) {
                 mForecastWeatherData = response.body();
-                loadPresentWeatherData();
                 mPreviousLocationDbHelper.insertLocation(mForecastWeatherData.city.name, mLongitude, mLatitude);
 
                 mWeatherItemListFragment = new WeatherItemListFragment();
@@ -158,22 +158,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "OpenWeatherMap data collection failed");
             }
         });
-    }
-
-    private void loadNotificationWeatherData() {
-        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(mForecastWeatherData.city.name + " " + (int) mCurrentWeatherData.main.temp + "°C")
-                .setContentText(mCurrentWeatherData.weather.get(0).description)
-                .setSmallIcon(R.drawable.weather_small_icon)
-                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0))
-                .setAutoCancel(true)
-                .setOngoing(true)
-                .build();
-
-        mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     private void loadPresentWeatherData() {
@@ -204,6 +188,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, "OpenWeatherMap current data collection failed");
             }
         });
+    }
+
+    private void loadNotificationWeatherData() {
+        Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(getResources().getString(R.string.main_Notification_title_x, mCurrentWeatherData.cityName, (int) Math.round(mCurrentWeatherData.main.temp)))
+                .setContentText(mCurrentWeatherData.weather.get(0).description)
+                .setSmallIcon(R.drawable.weather_small_icon)
+                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0))
+                .setAutoCancel(true)
+                .setOngoing(true)
+                .build();
+
+        mNotificationManager.notify(NOTIFICATION_ID, notification);
     }
 
     @Override
