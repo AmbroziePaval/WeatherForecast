@@ -97,8 +97,8 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
 
     private Bundle getDetailsBundle(WeatherData weatherData, ArrayList<WeatherData> weatherDataListFromSameDay) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("weather", weatherData);
-        bundle.putParcelableArrayList("weather_graph_list", weatherDataListFromSameDay);
+        bundle.putParcelable(WeatherItemDetailActivity.KEY_DETAILS_WEATHER, weatherData);
+        bundle.putParcelableArrayList(WeatherItemDetailActivity.KEY_DETAILS_WEATHER_GRAPH_LIST, weatherDataListFromSameDay);
         return bundle;
     }
 

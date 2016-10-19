@@ -37,6 +37,8 @@ import com.tapptitude.weatherforecast.utils.WeatherDateUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -47,24 +49,50 @@ public class MainActivity extends AppCompatActivity {
     private static final int NOTIFICATION_ID = 2;
     static final String STATE_LATITUDE = "latitude";
     static final String STATE_LONGITUDE = "longitude";
-    private WeatherItemListFragment mWeatherItemListFragment;
     private CurrentWeatherData mCurrentWeatherData;
     private ForecastWeatherData mForecastWeatherData;
-    private FloatingActionButton mChooseLocationFAB;
+    private WeatherItemListFragment mWeatherItemListFragment;
+    private PreviousLocationDbHelper mPreviousLocationDbHelper;
     private String mLongitude = "23.6006";
     private String mLatitude = "46.7595";
-    private Button mRefreshButton;
-    private Button mPreviousLocationButton;
+
+    @BindView(R.id.am_b_refresh)
+    Button mRefreshButton;
+    @BindView(R.id.am_b_previous_location)
+    Button mPreviousLocationButton;
+    @BindView(R.id.am_fab)
+    FloatingActionButton mChooseLocationFAB;
+
+    @BindView(R.id.am_tv_temp)
+    TextView mTempTV;
+    @BindView(R.id.am_tv_tempMinValue)
+    TextView mTempMinValueTV;
+    @BindView(R.id.am_tv_tempMaxValue)
+    TextView mTempMaxValueTV;
+    @BindView(R.id.am_tv_city)
+    TextView mCityTV;
+    @BindView(R.id.am_tv_country)
+    TextView mCountryTV;
+    @BindView(R.id.am_iv_weather_icon)
+    ImageView mWeatherIconIV;
+    @BindView(R.id.am_tv_humidity)
+    TextView mHumidityTV;
+    @BindView(R.id.am_tv_pressure)
+    TextView mPressureTV;
+    @BindView(R.id.am_tv_wind_speed)
+    TextView mWindSpeedTV;
+    @BindView(R.id.am_tv_wind_deg)
+    TextView mWindDegTV;
+
     private PopupMenu mLocationPopupMenu;
-    private PreviousLocationDbHelper mPreviousLocationDbHelper;
+    private BroadcastReceiver mWeatherBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mChooseLocationFAB = (FloatingActionButton) findViewById(R.id.am_fab);
-        mRefreshButton = (Button) findViewById(R.id.am_b_refresh);
-        mPreviousLocationButton = (Button) findViewById(R.id.am_b_previous_location);
+
+        ButterKnife.bind(this);
         setOnClickListeners();
 
         if (savedInstanceState != null) {
@@ -75,22 +103,25 @@ public class MainActivity extends AppCompatActivity {
         loadOpenWeatherMapData();
         mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
 
-        UpdateWeatherBR.startUpdater(this);
-        registerReceiver(broadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
+        setAutomaticWeatherUpdater();
     }
 
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            loadOpenWeatherMapData();
-            Toast.makeText(context, "Weather updated!", Toast.LENGTH_SHORT).show();
-        }
-    };
+    private void setAutomaticWeatherUpdater() {
+        UpdateWeatherBR.startUpdater(this);
+        registerReceiver(mWeatherBroadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
+        mWeatherBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                loadOpenWeatherMapData();
+                Toast.makeText(context, getString(R.string.main_weather_updated), Toast.LENGTH_SHORT).show();
+            }
+        };
+    }
 
     @Override
     protected void onDestroy() {
         UpdateWeatherBR.cancelUpdater(this);
-        unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(mWeatherBroadcastReceiver);
         super.onDestroy();
     }
 
@@ -113,20 +144,20 @@ public class MainActivity extends AppCompatActivity {
 
                 mWeatherItemListFragment = new WeatherItemListFragment();
                 Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("all_weather_data", (ArrayList<WeatherData>) mForecastWeatherData.list);
-                bundle.putParcelableArrayList("display_weather", getDisplayWeatherData());
+                bundle.putParcelableArrayList(WeatherItemListFragment.KEY_ALL_WEATHER_DATA, (ArrayList<WeatherData>) mForecastWeatherData.list);
+                bundle.putParcelableArrayList(WeatherItemListFragment.KEY_DISPLAY_WEATHER_DATA, getDisplayWeatherData());
                 mWeatherItemListFragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.am_fl_frameLayout, mWeatherItemListFragment);
                 transaction.commitAllowingStateLoss();
 
-                Log.d(TAG, "OpenWeatherMap data received");
+                Log.i(TAG, "OpenWeatherMap data received");
             }
 
             @Override
             public void onFailure(Call<ForecastWeatherData> call, Throwable t) {
-                Log.d(TAG, "OpenWeatherMap data collection failed");
+                Log.e(TAG, "OpenWeatherMap data collection failed");
             }
 
             private ArrayList<WeatherData> getDisplayWeatherData() {
@@ -166,17 +197,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadPresentWeatherData() {
-        final TextView temp = (TextView) findViewById(R.id.am_tv_temp);
-        final TextView tempMinValue = (TextView) findViewById(R.id.am_tv_tempMinValue);
-        final TextView tempMaxValue = (TextView) findViewById(R.id.am_tv_tempMaxValue);
-        final TextView city = (TextView) findViewById(R.id.am_tv_city);
-        final TextView country = (TextView) findViewById(R.id.am_tv_country);
-        final ImageView weatherIcon = (ImageView) findViewById(R.id.am_iv_weather_icon);
-        final TextView humidity = (TextView) findViewById(R.id.am_tv_humidity);
-        final TextView pressure = (TextView) findViewById(R.id.am_tv_pressure);
-        final TextView windSpeed = (TextView) findViewById(R.id.am_tv_wind_speed);
-        final TextView windDeg = (TextView) findViewById(R.id.am_tv_wind_deg);
-
         WeatherApiInterface weatherApiInterface = WeatherApiClient.getClient().create(WeatherApiInterface.class);
         Call<CurrentWeatherData> call = weatherApiInterface.getCurrentWeatherData(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude), "metric", getResources().getString(R.string.API_KEY));
         call.enqueue(new Callback<CurrentWeatherData>() {
@@ -185,23 +205,23 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentWeatherData = response.body();
                 loadNotificationWeatherData();
 
-                temp.setText(String.valueOf(Math.round(mCurrentWeatherData.main.temp)) + "°C");
-                tempMinValue.setText(String.valueOf(Math.round(mCurrentWeatherData.main.tempMin)) + "°C");
-                tempMaxValue.setText(String.valueOf(Math.round(mCurrentWeatherData.main.tempMax)) + "°C");
-                city.setText(mForecastWeatherData.city.name);
-                country.setText(mForecastWeatherData.city.country);
-                humidity.setText(String.valueOf(mCurrentWeatherData.main.humidity) + "%");
-                pressure.setText(String.valueOf(mCurrentWeatherData.main.pressure) + "hPa");
-                windSpeed.setText(String.valueOf(mCurrentWeatherData.wind.speed) + "m/s");
-                windDeg.setText(String.valueOf(mCurrentWeatherData.wind.degrees));
+                mTempTV.setText(getResources().getString(R.string.details_temperature_x, (int) Math.round(mCurrentWeatherData.main.temp)));
+                mTempMinValueTV.setText(getResources().getString(R.string.details_temperature_x, Math.round(mCurrentWeatherData.main.tempMin)));
+                mTempMaxValueTV.setText(getResources().getString(R.string.details_temperature_x, Math.round(mCurrentWeatherData.main.tempMax)));
+                mCityTV.setText(mForecastWeatherData.city.name);
+                mCountryTV.setText(mForecastWeatherData.city.country);
+                mHumidityTV.setText(getResources().getString(R.string.details_humidity_x, mCurrentWeatherData.main.humidity));
+                mPressureTV.setText(getResources().getString(R.string.details_pressure_x, mCurrentWeatherData.main.pressure));
+                mWindSpeedTV.setText(getResources().getString(R.string.details_wind_speed_x, mCurrentWeatherData.wind.speed));
+                mWindDegTV.setText(String.valueOf(mCurrentWeatherData.wind.degrees));
 
                 Glide.with(getApplicationContext()).load(WeatherApiClient.getImageUrl(mCurrentWeatherData.weather.get(0).icon))
-                        .into(weatherIcon);
+                        .into(mWeatherIconIV);
             }
 
             @Override
             public void onFailure(Call<CurrentWeatherData> call, Throwable t) {
-                Log.d(TAG, "OpenWeatherMap current data collection failed");
+                Log.e(TAG, "OpenWeatherMap current data collection failed");
             }
         });
     }
@@ -210,18 +230,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_LOCATION_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                double latitude = data.getDoubleExtra("latitude", 0);
-                double longitude = data.getDoubleExtra("longitude", 0);
+                double latitude = data.getDoubleExtra(LocationPickerActivity.KEY_LOCATION_LATITUDE, 0);
+                double longitude = data.getDoubleExtra(LocationPickerActivity.KEY_LOCATION_LONGITUDE, 0);
                 this.mLatitude = String.valueOf(latitude);
                 this.mLongitude = String.valueOf(longitude);
 
                 loadOpenWeatherMapData();
 
-                String twoDecimalFormat = "%.2f";
-                String toastText = "Latitude: " + String.format(twoDecimalFormat, latitude) + " Longitude: " + String.format(twoDecimalFormat, longitude);
+                String toastText = getResources().getString(R.string.main_coordinates_info_x, latitude, longitude);
                 Toast.makeText(this, toastText, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Location selection failed!", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.main_location_selection_failed), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -231,8 +250,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
-                bundle.putString("longitude", mLongitude);
-                bundle.putString("latitude", mLatitude);
+                bundle.putString(LocationPickerActivity.KEY_LOCATION_LONGITUDE, mLongitude);
+                bundle.putString(LocationPickerActivity.KEY_LOCATION_LATITUDE, mLatitude);
 
                 Intent pickLocationIntent = new Intent(v.getContext(), LocationPickerActivity.class);
                 pickLocationIntent.putExtras(bundle);
@@ -246,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadOpenWeatherMapData();
-                Toast.makeText(v.getContext(), "Weather updated!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), getString(R.string.main_weather_updated), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -256,8 +275,8 @@ public class MainActivity extends AppCompatActivity {
                 mLocationPopupMenu = new PopupMenu(v.getContext(), mPreviousLocationButton);
                 mLocationPopupMenu.getMenuInflater().inflate(R.menu.popup_menu_location, mLocationPopupMenu.getMenu());
                 mLocationPopupMenu.getMenu().clear();
-                final List<MyLocation> previousLocations = mPreviousLocationDbHelper.getPreviousLocations();
 
+                final List<MyLocation> previousLocations = mPreviousLocationDbHelper.getPreviousLocations();
                 for (MyLocation myLocation : previousLocations) {
                     mLocationPopupMenu.getMenu().add(Menu.NONE, (int) myLocation.id, Menu.NONE, myLocation.name);
                 }
@@ -271,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mLocationPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(MainActivity.this, "Location selected : " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, getString(R.string.main_selected_location_x, item.getTitle()), Toast.LENGTH_SHORT).show();
                         for (MyLocation myLocation : previousLocations) {
                             if (myLocation.name.equals(item.getTitle())) {
                                 mLatitude = myLocation.latitude;

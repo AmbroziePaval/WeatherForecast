@@ -273,7 +273,7 @@
             android:text="@string/calculation_time"/>
 
         <TextView
-            android:id="@+id/awd_tv_sea_time_calc_value"
+            android:id="@+id/awd_tv_time_calc_value"
             android:layout_marginStart="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

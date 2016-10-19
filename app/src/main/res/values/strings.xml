@@ -31,4 +31,13 @@
     <string name="description">Description:</string>
     <string name="max_temp">Max Temp</string>
     <string name="min_temp">Min Temp</string>
+    <string name="details_temperature_x" format="false">%d°C</string>
+    <string name="details_humidity_x" format="false">%d\%</string>
+    <string name="details_clouds_x" format="false">%d\%</string>
+    <string name="details_wind_speed_x" format="false">%.0fm/s</string>
+    <string name="details_pressure_x" format="false">%.0fhPa</string>
+    <string name="main_coordinates_info_x">Latitude: %1$.2f Longitude: %2$.2f</string>
+    <string name="main_selected_location_x">Location selected: %s</string>
+    <string name="main_weather_updated">Weather updated!</string>
+    <string name="main_location_selection_failed">Location selection failed!</string>
 </resources>

@@ -22,6 +22,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnTouch;
 
 /**
  * Created by ambroziepaval on 10/6/16.
@@ -29,23 +34,41 @@ import java.util.Date;
 public class WeatherItemDetailFragment extends Fragment {
     private WeatherData mWeatherData;
     private ArrayList<WeatherData> mWeatherGraphDataList;
-    private TextView mDay;
-    private TextView mTime;
-    private TextView mTemp;
-    private TextView mTempMin;
-    private TextView mTempMax;
-    private TextView mDescription;
-    private TextView mHumidity;
-    private TextView mCloudiness;
-    private TextView mWindSpeed;
-    private TextView mWindDegrees;
-    private TextView mPressure;
-    private TextView mGroundPressure;
-    private TextView mSeaPressure;
-    private TextView mCalcTime;
-    private ImageView mWeatherConditionIV;
-    private GraphView mWeatherGraphView;
-    private LinearLayout mllMain;
+
+    @BindView(R.id.wid_ll_main)
+    LinearLayout mllMain;
+    @BindView(R.id.wid_tv_day)
+    TextView mDay;
+    @BindView(R.id.wid_tv_time)
+    TextView mTime;
+    @BindView(R.id.wid_tv_temp)
+    TextView mTemp;
+    @BindView(R.id.wid_tv_temp_min_value)
+    TextView mTempMin;
+    @BindView(R.id.wid_tv_temp_max_value)
+    TextView mTempMax;
+    @BindView(R.id.wid_tv_description_value)
+    TextView mDescription;
+    @BindView(R.id.wid_tv_humidity_value)
+    TextView mHumidity;
+    @BindView(R.id.wid_tv_cloudiness_value)
+    TextView mCloudiness;
+    @BindView(R.id.wid_tv_wind_speed_value)
+    TextView mWindSpeed;
+    @BindView(R.id.wid_tv_wind_deg_value)
+    TextView mWindDegrees;
+    @BindView(R.id.wid_tv_pressure_value)
+    TextView mPressure;
+    @BindView(R.id.wid_tv_ground_pressure_value)
+    TextView mGroundPressure;
+    @BindView(R.id.wid_tv_sea_pressure_value)
+    TextView mSeaPressure;
+    @BindView(R.id.wid_tv_time_calc_value)
+    TextView mCalcTime;
+    @BindView(R.id.wid_iv_image)
+    ImageView mWeatherConditionIV;
+    @BindView(R.id.wid_gv_graph)
+    GraphView mWeatherGraphView;
 
     public WeatherItemDetailFragment() {
     }
@@ -69,25 +92,14 @@ public class WeatherItemDetailFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mllMain = (LinearLayout) view.findViewById(R.id.wid_ll_main);
+        ButterKnife.bind(view);
 
-        mDay = (TextView) view.findViewById(R.id.wid_tv_day);
-        mTime = (TextView) view.findViewById(R.id.wid_tv_time);
-        mTemp = (TextView) view.findViewById(R.id.wid_tv_temp);
-        mTempMin = (TextView) view.findViewById(R.id.wid_tv_temp_min_value);
-        mTempMax = (TextView) view.findViewById(R.id.wid_tv_temp_max_value);
-        mDescription = (TextView) view.findViewById(R.id.wid_tv_description_value);
-        mHumidity = (TextView) view.findViewById(R.id.wid_tv_humidity_value);
-        mCloudiness = (TextView) view.findViewById(R.id.wid_tv_cloudiness_value);
-        mWindSpeed = (TextView) view.findViewById(R.id.wid_tv_wind_speed_value);
-        mWindDegrees = (TextView) view.findViewById(R.id.wid_tv_wind_deg_value);
-        mPressure = (TextView) view.findViewById(R.id.wid_tv_pressure_value);
-        mGroundPressure = (TextView) view.findViewById(R.id.wid_tv_ground_pressure_value);
-        mSeaPressure = (TextView) view.findViewById(R.id.wid_tv_sea_pressure_value);
-        mCalcTime = (TextView) view.findViewById(R.id.wid_tv_sea_time_calc_value);
-        mWeatherConditionIV = (ImageView) view.findViewById(R.id.wid_iv_image);
-        mWeatherGraphView = (GraphView) view.findViewById(R.id.wid_gv_graph);
+        setDetailsGraph();
 
+        loadWeatherDetails();
+    }
+
+    private void setDetailsGraph() {
         mWeatherGraphView.setMinimalisticInfo(false);
         mWeatherGraphView.setMWeatherDataList(mWeatherGraphDataList);
         mWeatherGraphView.setOnTouchListener(new View.OnTouchListener() {
@@ -96,19 +108,17 @@ public class WeatherItemDetailFragment extends Fragment {
                 GraphView gv = (GraphView) v;
                 gv.onTouchEvent(event);
                 mWeatherData = gv.getLastClickedGraphItem();
-                loadDetails();
+                loadWeatherDetails();
                 return true;
             }
         });
-
-        loadDetails();
     }
 
 
-    private void loadDetails() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+    private void loadWeatherDetails() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
         try {
             Date date = simpleDateFormat.parse(mWeatherData.timeOfCalculation);
             mDay.setText(dayFormat.format(date));
@@ -118,17 +128,17 @@ public class WeatherItemDetailFragment extends Fragment {
         }
 
         mllMain.setBackground(TemperatureColorPicker.getTemperatureColorGradientInverted((int) Math.round(mWeatherData.main.temp)));
-        mTemp.setText(String.valueOf(Math.round(mWeatherData.main.temp)) + "°C");
-        mTempMin.setText(String.valueOf(Math.round(mWeatherData.main.tempMin)) + "°C");
-        mTempMax.setText(String.valueOf(Math.round(mWeatherData.main.tempMax)) + "°C");
+        mTemp.setText(getResources().getString(R.string.details_temperature_x, Math.round(mWeatherData.main.temp)));
+        mTempMin.setText(getResources().getString(R.string.details_temperature_x, Math.round(mWeatherData.main.tempMin)));
+        mTempMax.setText(getResources().getString(R.string.details_temperature_x, Math.round(mWeatherData.main.tempMax)));
         mDescription.setText(mWeatherData.weather.get(0).description);
-        mHumidity.setText(String.valueOf(mWeatherData.main.humidity) + "%");
-        mCloudiness.setText(String.valueOf(mWeatherData.clouds.all) + "%");
-        mWindSpeed.setText(String.valueOf((int) mWeatherData.wind.speed) + "m/s");
+        mHumidity.setText(getResources().getString(R.string.details_humidity_x, mWeatherData.main.humidity));
+        mCloudiness.setText(getResources().getString(R.string.details_clouds_x, mWeatherData.clouds.all));
+        mWindSpeed.setText(getResources().getString(R.string.details_wind_speed_x, mWeatherData.wind.speed));
         mWindDegrees.setText(String.valueOf((int) mWeatherData.wind.degrees));
-        mPressure.setText(String.valueOf((int) mWeatherData.main.pressure) + "hPa");
-        mGroundPressure.setText(String.valueOf((int) mWeatherData.main.groundLevelPressure) + "hPa");
-        mSeaPressure.setText(String.valueOf((int) mWeatherData.main.seaLevelPressure) + "hPa");
+        mPressure.setText(getResources().getString(R.string.details_pressure_x, mWeatherData.main.pressure));
+        mGroundPressure.setText(getResources().getString(R.string.details_pressure_x, mWeatherData.main.groundLevelPressure));
+        mSeaPressure.setText(getResources().getString(R.string.details_pressure_x, mWeatherData.main.seaLevelPressure));
         mCalcTime.setText(mWeatherData.timeOfCalculation);
 
         Glide.with(getContext()).load(WeatherApiClient.getImageUrl(mWeatherData.weather.get(0).icon))

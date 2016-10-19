@@ -5,11 +5,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
@@ -23,49 +23,83 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tapptitude.weatherforecast.R;
 
-import java.io.ByteArrayOutputStream;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by ambroziepaval on 10/3/16.
  */
 public class LocationPickerActivity extends Activity implements OnMapReadyCallback, View.OnClickListener {
+    public static final int MY_PERMISSION_ACCESS_LOCATION = 1;
+    public static final String KEY_LOCATION_LONGITUDE = "KEY_LOCATION_LONGITUDE";
+    public static final String KEY_LOCATION_LATITUDE = "KEY_LOCATION_LATITUDE";
     private GoogleMap mMap;
     private LatLng mCenterPosition;
     private LatLng mDeviceLocation;
     private String mLongitude = "23.6006";
     private String mLatitude = "46.7595";
 
+    MapFragment mMapFragment;
+    @BindView(R.id.alp_b_chooseLocation)
+    Button mPickLocationB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_picker);
 
-        Bundle bundle = getIntent().getExtras();
-        mLongitude = bundle.getString("longitude");
-        mLatitude = bundle.getString("latitude");
+        readBundleData();
+        ButterKnife.bind(this);
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.alp_f_map);
-        mapFragment.getMapAsync(this);
-        Button pickLocationB = (Button) findViewById(R.id.alp_b_chooseLocation);
-        pickLocationB.setOnClickListener(this);
+        mMapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.alp_f_map);
+        mMapFragment.getMapAsync(this);
+        mPickLocationB.setOnClickListener(this);
+    }
+
+    private void readBundleData() {
+        Bundle bundle = getIntent().getExtras();
+        mLongitude = bundle.getString(KEY_LOCATION_LONGITUDE);
+        mLatitude = bundle.getString(KEY_LOCATION_LATITUDE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_LOCATION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    useMap();
+                } else {
+                    sendResultPosition(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+                }
+            }
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        LocationListener locationListener = new MyLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
-                    MyLocationListener.MY_PERMISSION_ACCESS_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSION_ACCESS_LOCATION);
         }
+
+        useMap();
+    }
+
+    private void useMap() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationListener locationListener = new MyLocationListener();
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
         Location deviceLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (deviceLocation != null) {
             mDeviceLocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-            updateDeviceLocation();
+            placeDeviceMarkerOnMap();
         }
 
         mCenterPosition = mMap.getCameraPosition().target;
@@ -82,7 +116,7 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
         });
     }
 
-    protected void updateDeviceLocation() {
+    protected void placeDeviceMarkerOnMap() {
         mMap.clear();
         MarkerOptions deviceMarker = new MarkerOptions().position(mDeviceLocation).title("You").visible(true);
         mMap.addMarker(deviceMarker);
@@ -90,23 +124,25 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
 
     @Override
     public void onClick(View v) {
+        sendResultPosition(mCenterPosition.latitude, mCenterPosition.longitude);
+    }
+
+    private void sendResultPosition(double latitude, double longitude) {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("latitude", mCenterPosition.latitude);
-        resultIntent.putExtra("longitude", mCenterPosition.longitude);
+        resultIntent.putExtra(KEY_LOCATION_LATITUDE, latitude);
+        resultIntent.putExtra(KEY_LOCATION_LONGITUDE, longitude);
 
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
 
     private class MyLocationListener implements LocationListener {
-        public static final int MY_PERMISSION_ACCESS_LOCATION = 1;
-
         @Override
         public void onLocationChanged(Location location) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             mDeviceLocation = new LatLng(latitude, longitude);
-            updateDeviceLocation();
+            placeDeviceMarkerOnMap();
         }
 
         @Override
