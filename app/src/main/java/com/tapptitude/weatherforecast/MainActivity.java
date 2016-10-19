@@ -32,7 +32,6 @@ import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiInterface;
 import com.tapptitude.weatherforecast.sql.MyLocation;
 import com.tapptitude.weatherforecast.sql.PreviousLocationDbHelper;
-import com.tapptitude.weatherforecast.utils.WeatherDateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
