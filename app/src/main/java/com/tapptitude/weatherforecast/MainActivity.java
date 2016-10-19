@@ -145,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
                 mWeatherItemListFragment = new WeatherItemListFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(WeatherItemListFragment.KEY_ALL_WEATHER_DATA, (ArrayList<WeatherData>) mForecastWeatherData.list);
-                bundle.putParcelableArrayList(WeatherItemListFragment.KEY_DISPLAY_WEATHER_DATA, getDisplayWeatherData());
                 mWeatherItemListFragment.setArguments(bundle);
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -158,24 +157,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ForecastWeatherData> call, Throwable t) {
                 Log.e(TAG, "OpenWeatherMap data collection failed");
-            }
-
-            private ArrayList<WeatherData> getDisplayWeatherData() {
-                boolean todayIncluded = false;
-                ArrayList<WeatherData> displayWeather = new ArrayList<>();
-                for (int i = 1; i < mForecastWeatherData.list.size(); i++) {
-                    WeatherData weatherData = mForecastWeatherData.list.get(i);
-                    if (WeatherDateUtils.isNoonWeatherData(weatherData.timeOfCalculation)) {
-                        if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
-                            todayIncluded = true;
-                        }
-                        displayWeather.add(weatherData);
-                    }
-                }
-                if (!todayIncluded) {
-                    displayWeather.add(0, mForecastWeatherData.list.get(0));
-                }
-                return displayWeather;
             }
         });
     }

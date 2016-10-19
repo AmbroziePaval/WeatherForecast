@@ -3,6 +3,7 @@ package com.tapptitude.weatherforecast.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
@@ -25,19 +26,23 @@ import com.tapptitude.weatherforecast.custom_views.GraphView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by ambroziepaval on 10/5/16.
  */
 public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAdapter.WeatherContentViewHolder> {
     private Context context;
-    private FragmentManager mFragmentManager;
-    ArrayList<WeatherData> weatherList;
     ArrayList<WeatherData> displayWeatherList;
+    private MyAdapterListener mMyAdapterListener;
 
-    public WeatherContentAdapter(Context context, FragmentManager fragmentManager, ArrayList<WeatherData> weatherDataList, ArrayList<WeatherData> displayWeatherList) {
+    public void setMyAdapterListener(MyAdapterListener myAdapterListener) {
+        mMyAdapterListener = myAdapterListener;
+    }
+
+    public WeatherContentAdapter(Context context, ArrayList<WeatherData> displayWeatherList) {
         this.context = context;
-        this.mFragmentManager = fragmentManager;
-        this.weatherList = weatherDataList;
         this.displayWeatherList = displayWeatherList;
     }
 
@@ -52,82 +57,46 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
     public void onBindViewHolder(final WeatherContentViewHolder holder, int position) {
         WeatherData weatherData = displayWeatherList.get(position);
 
-        String tempText = String.valueOf(Math.round(weatherData.main.temp)) + "°C";
+        String tempText = context.getResources().getString(R.string.details_temperature_x, (int) Math.round(weatherData.main.temp));
         holder.mWeatherTempTV.setText(tempText);
-
         holder.mWeatherDayTV.setText(WeatherDateUtils.getDayOfCalculation(weatherData.timeOfCalculation));
+        holder.mWeatherTimeTV.setText(getTimeText(weatherData));
 
+        holder.mGraphView.setMWeatherDataList(mMyAdapterListener.getWeatherDataFromSameDay(displayWeatherList.get(position)));
+
+        holder.mWeatherCardCV.setBackground(TemperatureColorPicker.getTemperatureColorGradient270Deg((int) Math.round(weatherData.main.temp)));
+        holder.mWeatherCardCV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMyAdapterListener.onWeatherCardItemClick(displayWeatherList.get(holder.getAdapterPosition()));
+            }
+        });
+
+        Glide.with(context).load(WeatherApiClient.getImageUrl(weatherData.weather.get(0).icon)).into(holder.mWeatherConditionImageIV);
+    }
+
+    @NonNull
+    private String getTimeText(WeatherData weatherData) {
         String timeText;
         if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
             timeText = "Today " + WeatherDateUtils.getTimeStringFromWeatherData(weatherData.timeOfCalculation);
         } else {
             timeText = WeatherDateUtils.getDateOfCalculation(weatherData.timeOfCalculation) + ", Noon";
         }
-        holder.mWeatherTimeTV.setText(timeText);
-
-        Glide.with(context).load(WeatherApiClient.getImageUrl(weatherData.weather.get(0).icon))
-                .into(holder.mWeatherConditionImageIV);
-
-        holder.mGraphView.setMWeatherDataList(getWeatherDataFromSameDay(displayWeatherList.get(position)));
-        final String twoPane = holder.itemView.getResources().getString(R.string.tablet);
-        if (twoPane.equals("true")) {
-            Bundle bundle = getDetailsBundle(displayWeatherList.get(0), getWeatherDataFromSameDay(displayWeatherList.get(0)));
-            displayWeatherDetailsFragment(bundle);
-        }
-
-        holder.mWeatherCardCV.setBackground(TemperatureColorPicker.getTemperatureColorGradient270Deg((int) Math.round(weatherData.main.temp)));
-//        holder.mWeatherCardCV.setCardBackgroundColor(TemperatureColorPicker.getTemperatureColor((int) weatherData.main.temp));
-        holder.mWeatherCardCV.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = getDetailsBundle(displayWeatherList.get(holder.getAdapterPosition()), getWeatherDataFromSameDay(displayWeatherList.get(holder.getAdapterPosition())));
-
-                if (twoPane.equals("true")) {
-                    displayWeatherDetailsFragment(bundle);
-                } else {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, WeatherItemDetailActivity.class);
-                    intent.putExtras(bundle);
-
-                    context.startActivity(intent);
-                }
-            }
-        });
-    }
-
-    private Bundle getDetailsBundle(WeatherData weatherData, ArrayList<WeatherData> weatherDataListFromSameDay) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(WeatherItemDetailActivity.KEY_DETAILS_WEATHER, weatherData);
-        bundle.putParcelableArrayList(WeatherItemDetailActivity.KEY_DETAILS_WEATHER_GRAPH_LIST, weatherDataListFromSameDay);
-        return bundle;
-    }
-
-    private void displayWeatherDetailsFragment(Bundle bundle) {
-        WeatherItemDetailFragment detailsFragment = new WeatherItemDetailFragment();
-        detailsFragment.setArguments(bundle);
-
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.replace(R.id.wil_fl_weather_item_detail_container, detailsFragment);
-        transaction.commit();
-    }
-
-    private ArrayList<WeatherData> getWeatherDataFromSameDay(WeatherData day) {
-        ArrayList<WeatherData> dataArrayList = new ArrayList<>();
-        for (WeatherData weatherData : weatherList) {
-            if (WeatherDateUtils.fromSameDay(day.timeOfCalculation, weatherData.timeOfCalculation)) {
-                dataArrayList.add(weatherData);
-            }
-        }
-        return dataArrayList;
+        return timeText;
     }
 
     @Override
     public int getItemCount() {
-        return displayWeatherList.size();
+        return displayWeatherList != null ? displayWeatherList.size() : 0;
+    }
+
+    public interface MyAdapterListener {
+        void onWeatherCardItemClick(WeatherData weatherData);
+        ArrayList<WeatherData> getWeatherDataFromSameDay(WeatherData weatherData);
     }
 
     class WeatherContentViewHolder extends RecyclerView.ViewHolder {
-        private final View itemView;
         private final CardView mWeatherCardCV;
         private final TextView mWeatherTempTV;
         private final TextView mWeatherTimeTV;
@@ -138,9 +107,8 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
         public WeatherContentViewHolder(View itemView) {
             super(itemView);
 
-            this.itemView = itemView;
-            mWeatherTempTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_temp);
             mWeatherCardCV = (CardView) itemView.findViewById(R.id.wic_cv_weather);
+            mWeatherTempTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_temp);
             mWeatherTimeTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_time);
             mWeatherDayTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_day);
             mWeatherConditionImageIV = (ImageView) itemView.findViewById(R.id.wic_iv_weather_condition);

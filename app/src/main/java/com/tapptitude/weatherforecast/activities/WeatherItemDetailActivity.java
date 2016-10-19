@@ -105,6 +105,7 @@ public class WeatherItemDetailActivity extends Activity {
 
 
     private void loadWeatherDetails() {
+        if (mWeatherData == null) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
