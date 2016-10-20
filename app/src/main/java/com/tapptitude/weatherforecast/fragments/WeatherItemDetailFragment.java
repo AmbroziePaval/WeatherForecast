@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -13,10 +12,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tapptitude.weatherforecast.R;
+import com.tapptitude.weatherforecast.custom_views.GraphView;
 import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.utils.TemperatureColorPicker;
-import com.tapptitude.weatherforecast.custom_views.GraphView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,7 +25,6 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnTouch;
 
 /**
  * Created by ambroziepaval on 10/6/16.

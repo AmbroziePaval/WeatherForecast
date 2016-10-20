@@ -19,11 +19,16 @@ import java.util.List;
  * Created by ambroziepaval on 10/10/16.
  */
 public class GraphView extends View {
+    public static final int DEFAULT_LINE_WIDTH = 1;
+    public static final int DEFAULT_TEMP_TEXT_SIZE = 12;
+    public static final int DEFAULT_TIME_TEXT_SIZE = 10;
+    public static final int DEFAULT_GRAPH_POINT_RADIUS = 5;
+    public static final int DEFAULT_SPACE_BETWEEN_TEMP_AND_GRAPHPOINT = 10;
+    public static final int EXTRA_VERTICAL_BORDER_SPACES = 4;
     private Context mContext;
     private float mDensityPixel;
     public List<WeatherData> mWeatherDataList;
     public List<GraphItem> mGraphItemList;
-    private WeatherData mLastClickedGraphItem;
     private Paint mDotPaint;
     private Paint mLinePaint;
     private Paint mTempPaint;
@@ -67,20 +72,20 @@ public class GraphView extends View {
 
         mLinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mLinePaint.setStyle(Paint.Style.STROKE);
-        mLinePaint.setStrokeWidth(1 * mDensityPixel);
+        mLinePaint.setStrokeWidth(DEFAULT_LINE_WIDTH * mDensityPixel);
         mLinePaint.setColor(Color.BLACK);
 
         mTempPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTempPaint.setColor(Color.BLACK);
         mTempPaint.setStyle(Paint.Style.FILL);
         mTempPaint.setTextAlign(Paint.Align.CENTER);
-        mTempPaint.setTextSize(12 * mDensityPixel);
+        mTempPaint.setTextSize(DEFAULT_TEMP_TEXT_SIZE * mDensityPixel);
 
         mTimePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTimePaint.setColor(Color.BLACK);
         mTimePaint.setStyle(Paint.Style.FILL);
         mTimePaint.setTextAlign(Paint.Align.CENTER);
-        mTimePaint.setTextSize(10 * mDensityPixel);
+        mTimePaint.setTextSize(DEFAULT_TIME_TEXT_SIZE * mDensityPixel);
 
         if (this.isInEditMode()) {
             mGraphItemList = new ArrayList<>();
@@ -125,7 +130,6 @@ public class GraphView extends View {
 
                 int clickedGraphItemPosition = getClickedGraphItemPosition(x, y);
                 if (clickedGraphItemPosition != -1) {
-//                    mLastClickedGraphItem = mWeatherDataList.get(clickedGraphItemPosition);
                     if (mMyGraphViewListener != null) {
                         mMyGraphViewListener.onGraphItemClickListener(mWeatherDataList.get(clickedGraphItemPosition));
                     }
@@ -154,7 +158,7 @@ public class GraphView extends View {
     private void drawPoints(Canvas canvas) {
         for (GraphItem graphItem : mGraphItemList) {
             mDotPaint.setColor(graphItem.color);
-            canvas.drawCircle(graphItem.x, graphItem.y, 5 * mDensityPixel, mDotPaint);
+            canvas.drawCircle(graphItem.x, graphItem.y, DEFAULT_GRAPH_POINT_RADIUS * mDensityPixel, mDotPaint);
         }
     }
 
@@ -168,12 +172,8 @@ public class GraphView extends View {
 
     private void drawTemps(Canvas canvas) {
         for (GraphItem graphItem : mGraphItemList) {
-//            if (!minimalisticInfo) {
-//                mTempPaint.setColor(graphItem.color);
-//            } else {
             mTempPaint.setColor(Color.BLACK);
-//            }
-            canvas.drawText(String.valueOf(graphItem.temp) + "°C", graphItem.x, graphItem.y - 10 * mDensityPixel, mTempPaint);
+            canvas.drawText(String.valueOf(graphItem.temp) + "°C", graphItem.x, graphItem.y - DEFAULT_SPACE_BETWEEN_TEMP_AND_GRAPHPOINT * mDensityPixel, mTempPaint);
         }
     }
 
@@ -188,7 +188,7 @@ public class GraphView extends View {
         int mItemMinimumValue = getMinimumItemValue();
         int mItemMaximumValue = getMaximumItemValue();
         int mItemHorizontalSpace = mViewWidth / (mItemCount + 1);
-        nrVerticalSpaces = mItemMaximumValue - mItemMinimumValue + 4;
+        nrVerticalSpaces = mItemMaximumValue - mItemMinimumValue + EXTRA_VERTICAL_BORDER_SPACES;
         mItemVerticalSpace = mViewHeight / nrVerticalSpaces;
 
         int itemCount = 1;
@@ -243,15 +243,11 @@ public class GraphView extends View {
         mMyGraphViewListener = myGraphViewListener;
     }
 
-    public WeatherData getLastClickedGraphItem() {
-        return mLastClickedGraphItem;
-    }
-
     public static class GraphItem {
-        public int x;
-        public int y;
+        int x;
+        int y;
+        int temp;
         public int color;
-        public int temp;
         public String time;
     }
 

@@ -9,7 +9,7 @@ public class MyLocation {
     public String longitude;
     public String latitude;
 
-    public MyLocation(long id, String name, String longitude, String latitude) {
+    MyLocation(long id, String name, String longitude, String latitude) {
         this.id = id;
         this.name = name;
         this.longitude = longitude;
