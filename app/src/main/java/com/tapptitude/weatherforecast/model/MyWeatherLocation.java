@@ -20,10 +20,6 @@ public class MyWeatherLocation extends RealmObject{
         return cityName;
     }
 
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
-    }
-
     public double getLongitude() {
         return longitude;
     }

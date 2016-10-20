@@ -100,7 +100,7 @@ public class WeatherItemDetailActivity extends Activity implements GraphView.MyG
 
 
     private void loadWeatherDetails() {
-        if (mWeatherData == null && mWeatherData.timeOfCalculation != null) return;
+        if (mWeatherData == null || mWeatherData.timeOfCalculation == null) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
