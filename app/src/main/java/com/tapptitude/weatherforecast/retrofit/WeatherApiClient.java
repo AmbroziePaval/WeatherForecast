@@ -11,7 +11,7 @@ public class WeatherApiClient {
     private static final String IMG_URL = "http://download.spinetix.com/content/widgets/icons/weather/";
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient() {
+    private static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -19,6 +19,10 @@ public class WeatherApiClient {
                     .build();
         }
         return retrofit;
+    }
+
+    public static WeatherApiInterface getAPI() {
+        return getClient().create(WeatherApiInterface.class);
     }
 
     public static String getImageUrl(String weatherIconId) {

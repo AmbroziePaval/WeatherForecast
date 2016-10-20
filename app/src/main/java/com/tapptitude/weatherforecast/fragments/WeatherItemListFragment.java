@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,72 +16,101 @@ import android.view.ViewGroup;
 import com.tapptitude.weatherforecast.R;
 import com.tapptitude.weatherforecast.activities.WeatherItemDetailActivity;
 import com.tapptitude.weatherforecast.adapters.WeatherContentAdapter;
+import com.tapptitude.weatherforecast.json.owm_forecast.ForecastWeatherData;
 import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
+import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
+import com.tapptitude.weatherforecast.retrofit.WeatherApiInterface;
 import com.tapptitude.weatherforecast.utils.WeatherDateUtils;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by ambroziepaval on 10/5/16.
  */
 public class WeatherItemListFragment extends Fragment implements WeatherContentAdapter.MyAdapterListener {
-    private FragmentManager mFragmentManager;
+    private static final String TAG = WeatherItemListFragment.class.getSimpleName();
+    @BindView(R.id.wil_rv_weatherItemList)
     RecyclerView mWeatherForecastRV;
 
-    public static final String KEY_ALL_WEATHER_DATA = "KEY_ALL_WEATHER_DATA";
-    private ArrayList<WeatherData> mWeatherDataArrayList;
+    public static final String KEY_LOCATION_LATITUDE = "KEY_LOCATION_LATITUDE";
+    public static final String KEY_LOCATION_LONGITUDE = "KEY_LOCATION_LONGITUDE";
+
+    private List<WeatherData> mWeatherDataArrayList;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.weather_item_list, container, false);
 
-        Bundle bundle = getArguments();
-        mWeatherDataArrayList = bundle.getParcelableArrayList(KEY_ALL_WEATHER_DATA);
-        ArrayList<WeatherData> displayWeatherList = getDisplayWeatherData();
+        readBundleData();
+        ButterKnife.bind(this, view);
+        return view;
+    }
 
-        mWeatherForecastRV = (RecyclerView) view.findViewById(R.id.wil_rv_weatherItemList);
-        mFragmentManager = getFragmentManager();
+    private void readBundleData() {
+        Bundle bundle = getArguments();
+        double latitude = bundle.getDouble(KEY_LOCATION_LATITUDE);
+        double longitude = bundle.getDouble(KEY_LOCATION_LONGITUDE);
+        loadOpenWeatherMapData(latitude, longitude);
+    }
+
+    private void loadOpenWeatherMapData(double latitude, double longitude){
+        WeatherApiInterface weatherApiInterface = WeatherApiClient.getAPI();
+        Call<ForecastWeatherData> call = weatherApiInterface.getOpenWeatherData(latitude, longitude, "metric", getResources().getString(R.string.API_KEY));
+        call.enqueue(new Callback<ForecastWeatherData>() {
+            @Override
+            public void onResponse(Call<ForecastWeatherData> call, Response<ForecastWeatherData> response) {
+                ForecastWeatherData forecastWeatherData = response.body();
+
+                mWeatherDataArrayList = forecastWeatherData.list;
+                setUpRVContentAdapter(getDisplayWeatherData(mWeatherDataArrayList));
+                Log.i(TAG, "OpenWeatherMap data received");
+            }
+
+            @Override
+            public void onFailure(Call<ForecastWeatherData> call, Throwable t) {
+                setUpRVContentAdapter(new ArrayList<WeatherData>());
+                Log.e(TAG, "OpenWeatherMap data collection failed");
+            }
+        });
+    }
+
+    private void setUpRVContentAdapter(ArrayList<WeatherData> displayWeatherList) {
         WeatherContentAdapter weatherAdapter = new WeatherContentAdapter(getContext(), displayWeatherList);
         weatherAdapter.setMyAdapterListener(this);
         mWeatherForecastRV.setAdapter(weatherAdapter);
         mWeatherForecastRV.setLayoutManager(new LinearLayoutManager(getContext()));
         mWeatherForecastRV.setItemAnimator(new DefaultItemAnimator());
-
-        return view;
-    }
-
-    private ArrayList<WeatherData> getDisplayWeatherData() {
-        boolean todayIncluded = false;
-        ArrayList<WeatherData> displayWeather = new ArrayList<>();
-        for (int i = 1; i < mWeatherDataArrayList.size(); i++) {
-            WeatherData weatherData = mWeatherDataArrayList.get(i);
-            if (WeatherDateUtils.isNoonWeatherData(weatherData.timeOfCalculation)) {
-                if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
-                    todayIncluded = true;
-                }
-                displayWeather.add(weatherData);
-            }
-        }
-        if (!todayIncluded) {
-            displayWeather.add(0, mWeatherDataArrayList.get(0));
-        }
-        return displayWeather;
     }
 
     @Override
     public void onWeatherCardItemClick(WeatherData weatherData) {
-        final String twoPane = getResources().getString(R.string.tablet);
-
         Bundle bundle = getDetailsBundle(weatherData, getWeatherDataFromSameDay(weatherData));
 
-        if (twoPane.equals("true")) {
+        final int twoPaneLayout = getResources().getInteger(R.integer.is_tablet);
+        if (twoPaneLayout == 1) {
             displayWeatherDetailsFragment(bundle);
         } else {
             Intent intent = new Intent(getContext(), WeatherItemDetailActivity.class);
             intent.putExtras(bundle);
             getContext().startActivity(intent);
         }
+    }
+
+    private void displayWeatherDetailsFragment(Bundle bundle) {
+        WeatherItemDetailFragment detailsFragment = new WeatherItemDetailFragment();
+        detailsFragment.setArguments(bundle);
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.wil_fl_weather_item_detail_container, detailsFragment);
+        transaction.commit();
     }
 
     @Override
@@ -102,12 +131,21 @@ public class WeatherItemListFragment extends Fragment implements WeatherContentA
         return bundle;
     }
 
-    private void displayWeatherDetailsFragment(Bundle bundle) {
-        WeatherItemDetailFragment detailsFragment = new WeatherItemDetailFragment();
-        detailsFragment.setArguments(bundle);
-
-        FragmentTransaction transaction = mFragmentManager.beginTransaction();
-        transaction.replace(R.id.wil_fl_weather_item_detail_container, detailsFragment);
-        transaction.commit();
+    private ArrayList<WeatherData> getDisplayWeatherData(List<WeatherData> weatherDataArrayList) {
+        boolean todayIncluded = false;
+        ArrayList<WeatherData> displayWeather = new ArrayList<>();
+        for (int i = 1; i < weatherDataArrayList.size(); i++) {
+            WeatherData weatherData = mWeatherDataArrayList.get(i);
+            if (WeatherDateUtils.isNoonWeatherData(weatherData.timeOfCalculation)) {
+                if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
+                    todayIncluded = true;
+                }
+                displayWeather.add(weatherData);
+            }
+        }
+        if (!todayIncluded) {
+            displayWeather.add(0, mWeatherDataArrayList.get(0));
+        }
+        return displayWeather;
     }
 }

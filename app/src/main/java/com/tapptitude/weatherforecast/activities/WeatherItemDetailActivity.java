@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 /**
  * Created by ambroziepaval on 10/6/16.
  */
-public class WeatherItemDetailActivity extends Activity {
+public class WeatherItemDetailActivity extends Activity implements GraphView.MyGraphViewListener{
     public static final String KEY_DETAILS_WEATHER = "KEY_DETAILS_WEATHER";
     public static final String KEY_DETAILS_WEATHER_GRAPH_LIST = "KEY_DETAILS_WEATHER_GRAPH_LIST";
     private WeatherData mWeatherData;
@@ -85,16 +85,13 @@ public class WeatherItemDetailActivity extends Activity {
     private void setDetailsGraph() {
         mWeatherGraphView.setMinimalisticInfo(false);
         mWeatherGraphView.setMWeatherDataList(mWeatherGraphDataList);
-        mWeatherGraphView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                GraphView gv = (GraphView) v;
-                gv.onTouchEvent(event);
-                mWeatherData = gv.getLastClickedGraphItem();
-                loadWeatherDetails();
-                return true;
-            }
-        });
+        mWeatherGraphView.setMyGraphViewListener(this);
+    }
+
+    @Override
+    public void onGraphItemClickListener(WeatherData weatherData) {
+        mWeatherData = weatherData;
+        loadWeatherDetails();
     }
 
     private void readBundleData() {
@@ -105,7 +102,7 @@ public class WeatherItemDetailActivity extends Activity {
 
 
     private void loadWeatherDetails() {
-        if (mWeatherData == null) return;
+        if (mWeatherData == null && mWeatherData.timeOfCalculation != null) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);

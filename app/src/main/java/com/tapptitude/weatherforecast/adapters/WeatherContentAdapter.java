@@ -79,9 +79,9 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
     private String getTimeText(WeatherData weatherData) {
         String timeText;
         if (WeatherDateUtils.isTodayWeatherData(weatherData.timeOfCalculation)) {
-            timeText = "Today " + WeatherDateUtils.getTimeStringFromWeatherData(weatherData.timeOfCalculation);
+            timeText = context.getResources().getString(R.string.details_today_time_x, WeatherDateUtils.getTimeStringFromWeatherData(weatherData.timeOfCalculation));
         } else {
-            timeText = WeatherDateUtils.getDateOfCalculation(weatherData.timeOfCalculation) + ", Noon";
+            timeText = context.getResources().getString(R.string.details_noon_time_x, WeatherDateUtils.getDateOfCalculation(weatherData.timeOfCalculation));
         }
         return timeText;
     }
@@ -93,26 +93,29 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
 
     public interface MyAdapterListener {
         void onWeatherCardItemClick(WeatherData weatherData);
+
         ArrayList<WeatherData> getWeatherDataFromSameDay(WeatherData weatherData);
     }
 
     class WeatherContentViewHolder extends RecyclerView.ViewHolder {
-        private final CardView mWeatherCardCV;
-        private final TextView mWeatherTempTV;
-        private final TextView mWeatherTimeTV;
-        private final TextView mWeatherDayTV;
-        private final ImageView mWeatherConditionImageIV;
-        private final GraphView mGraphView;
+        @BindView(R.id.wic_cv_weather)
+        CardView mWeatherCardCV;
+        @BindView(R.id.wic_tv_weather_temp)
+        TextView mWeatherTempTV;
+        @BindView(R.id.wic_tv_weather_time)
+        TextView mWeatherTimeTV;
+        @BindView(R.id.wic_tv_weather_day)
+        TextView mWeatherDayTV;
+        @BindView(R.id.wic_iv_weather_condition)
+        ImageView mWeatherConditionImageIV;
+        @BindView(R.id.wic_gv_graph)
+        GraphView mGraphView;
 
         public WeatherContentViewHolder(View itemView) {
             super(itemView);
 
-            mWeatherCardCV = (CardView) itemView.findViewById(R.id.wic_cv_weather);
-            mWeatherTempTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_temp);
-            mWeatherTimeTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_time);
-            mWeatherDayTV = (TextView) itemView.findViewById(R.id.wic_tv_weather_day);
-            mWeatherConditionImageIV = (ImageView) itemView.findViewById(R.id.wic_iv_weather_condition);
-            mGraphView = (GraphView) itemView.findViewById(R.id.wic_gv_graph);
+            ButterKnife.bind(this, itemView);
+
             mGraphView.setMinimalisticInfo(true);
         }
     }

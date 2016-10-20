@@ -36,8 +36,8 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
     private GoogleMap mMap;
     private LatLng mCenterPosition;
     private LatLng mDeviceLocation;
-    private String mLongitude = "23.6006";
-    private String mLatitude = "46.7595";
+    private double mLongitude = 23.6006;
+    private double mLatitude = 46.7595;
 
     MapFragment mMapFragment;
     @BindView(R.id.alp_b_chooseLocation)
@@ -58,8 +58,8 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
 
     private void readBundleData() {
         Bundle bundle = getIntent().getExtras();
-        mLongitude = bundle.getString(KEY_LOCATION_LONGITUDE);
-        mLatitude = bundle.getString(KEY_LOCATION_LATITUDE);
+        mLongitude = bundle.getDouble(KEY_LOCATION_LONGITUDE);
+        mLatitude = bundle.getDouble(KEY_LOCATION_LATITUDE);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     useMap();
                 } else {
-                    sendResultPosition(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+                    sendResultPosition(mLatitude, mLongitude);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class LocationPickerActivity extends Activity implements OnMapReadyCallba
 
         mCenterPosition = mMap.getCameraPosition().target;
 
-        LatLng lastKnownLocation = new LatLng(Double.parseDouble(mLatitude), Double.parseDouble(mLongitude));
+        LatLng lastKnownLocation = new LatLng(mLatitude, mLongitude);
         CameraUpdate lastLocation = CameraUpdateFactory.newLatLngZoom(lastKnownLocation, 16);
         mMap.animateCamera(lastLocation);
 

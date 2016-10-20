@@ -31,7 +31,7 @@ import butterknife.OnTouch;
 /**
  * Created by ambroziepaval on 10/6/16.
  */
-public class WeatherItemDetailFragment extends Fragment {
+public class WeatherItemDetailFragment extends Fragment implements GraphView.MyGraphViewListener{
     private WeatherData mWeatherData;
     private ArrayList<WeatherData> mWeatherGraphDataList;
 
@@ -102,16 +102,13 @@ public class WeatherItemDetailFragment extends Fragment {
     private void setDetailsGraph() {
         mWeatherGraphView.setMinimalisticInfo(false);
         mWeatherGraphView.setMWeatherDataList(mWeatherGraphDataList);
-        mWeatherGraphView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                GraphView gv = (GraphView) v;
-                gv.onTouchEvent(event);
-                mWeatherData = gv.getLastClickedGraphItem();
-                loadWeatherDetails();
-                return true;
-            }
-        });
+        mWeatherGraphView.setMyGraphViewListener(this);
+    }
+
+    @Override
+    public void onGraphItemClickListener(WeatherData weatherData) {
+        mWeatherData = weatherData;
+        loadWeatherDetails();
     }
 
 

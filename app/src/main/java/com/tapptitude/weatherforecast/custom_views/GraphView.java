@@ -34,6 +34,8 @@ public class GraphView extends View {
     private int mViewHeight;
     private boolean minimalisticInfo;
 
+    private MyGraphViewListener mMyGraphViewListener;
+
     public GraphView(Context context) {
         super(context);
         this.mContext = context;
@@ -123,7 +125,10 @@ public class GraphView extends View {
 
                 int clickedGraphItemPosition = getClickedGraphItemPosition(x, y);
                 if (clickedGraphItemPosition != -1) {
-                    mLastClickedGraphItem = mWeatherDataList.get(clickedGraphItemPosition);
+//                    mLastClickedGraphItem = mWeatherDataList.get(clickedGraphItemPosition);
+                    if (mMyGraphViewListener != null) {
+                        mMyGraphViewListener.onGraphItemClickListener(mWeatherDataList.get(clickedGraphItemPosition));
+                    }
                 }
 
                 break;
@@ -166,7 +171,7 @@ public class GraphView extends View {
 //            if (!minimalisticInfo) {
 //                mTempPaint.setColor(graphItem.color);
 //            } else {
-                mTempPaint.setColor(Color.BLACK);
+            mTempPaint.setColor(Color.BLACK);
 //            }
             canvas.drawText(String.valueOf(graphItem.temp) + "°C", graphItem.x, graphItem.y - 10 * mDensityPixel, mTempPaint);
         }
@@ -234,6 +239,10 @@ public class GraphView extends View {
         }
     }
 
+    public void setMyGraphViewListener(MyGraphViewListener myGraphViewListener) {
+        mMyGraphViewListener = myGraphViewListener;
+    }
+
     public WeatherData getLastClickedGraphItem() {
         return mLastClickedGraphItem;
     }
@@ -244,5 +253,9 @@ public class GraphView extends View {
         public int color;
         public int temp;
         public String time;
+    }
+
+    public interface MyGraphViewListener {
+        void onGraphItemClickListener(WeatherData weatherData);
     }
 }
