@@ -1,7 +1,7 @@
-package com.tapptitude.weatherforecast.json;
+package com.tapptitude.weatherforecast.model.json;
 
 import com.google.gson.Gson;
-import com.tapptitude.weatherforecast.json.owm_forecast.ForecastWeatherData;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.ForecastWeatherData;
 
 /**
  * Created by ambroziepaval on 10/5/16.

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:weightSum="6">
 
-    <com.tapptitude.weatherforecast.custom_views.GraphView
+    <com.tapptitude.weatherforecast.ui.custom_views.GraphView
         android:id="@+id/wid_gv_graph"
         android:layout_width="match_parent"
         android:layout_height="0dp"

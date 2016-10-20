@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.activities;
+package com.tapptitude.weatherforecast.ui.activities;
 
 import android.Manifest;
 import android.app.Activity;

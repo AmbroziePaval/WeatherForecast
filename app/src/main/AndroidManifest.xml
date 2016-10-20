@@ -24,8 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.WeatherItemDetailActivity"/>
-        <activity android:name=".activities.LocationPickerActivity"/>
+        <activity android:name=".ui.activities.WeatherItemDetailActivity"/>
+        <activity android:name=".ui.activities.LocationPickerActivity"/>
         <receiver  android:process=":remote" android:name=".UpdateWeatherBR"/>
     </application>
 

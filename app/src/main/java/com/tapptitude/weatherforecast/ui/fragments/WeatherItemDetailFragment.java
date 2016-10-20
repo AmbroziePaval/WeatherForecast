@@ -1,19 +1,21 @@
-package com.tapptitude.weatherforecast.activities;
+package com.tapptitude.weatherforecast.ui.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tapptitude.weatherforecast.R;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
+import com.tapptitude.weatherforecast.ui.custom_views.GraphView;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.utils.TemperatureColorPicker;
-import com.tapptitude.weatherforecast.custom_views.GraphView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,55 +29,68 @@ import butterknife.ButterKnife;
 /**
  * Created by ambroziepaval on 10/6/16.
  */
-public class WeatherItemDetailActivity extends Activity implements GraphView.MyGraphViewListener{
-    public static final String KEY_DETAILS_WEATHER = "KEY_DETAILS_WEATHER";
-    public static final String KEY_DETAILS_WEATHER_GRAPH_LIST = "KEY_DETAILS_WEATHER_GRAPH_LIST";
+public class WeatherItemDetailFragment extends Fragment implements GraphView.MyGraphViewListener{
     private WeatherData mWeatherData;
     private ArrayList<WeatherData> mWeatherGraphDataList;
 
-    @BindView(R.id.awd_ll_main)
+    @BindView(R.id.wid_ll_main)
     LinearLayout mllMain;
-    @BindView(R.id.awd_tv_day)
+    @BindView(R.id.wid_tv_day)
     TextView mDay;
-    @BindView(R.id.awd_tv_time)
+    @BindView(R.id.wid_tv_time)
     TextView mTime;
-    @BindView(R.id.awd_tv_temp)
+    @BindView(R.id.wid_tv_temp)
     TextView mTemp;
-    @BindView(R.id.awd_tv_temp_min_value)
+    @BindView(R.id.wid_tv_temp_min_value)
     TextView mTempMin;
-    @BindView(R.id.awd_tv_temp_max_value)
+    @BindView(R.id.wid_tv_temp_max_value)
     TextView mTempMax;
-    @BindView(R.id.awd_tv_description_value)
+    @BindView(R.id.wid_tv_description_value)
     TextView mDescription;
-    @BindView(R.id.awd_tv_humidity_value)
+    @BindView(R.id.wid_tv_humidity_value)
     TextView mHumidity;
-    @BindView(R.id.awd_tv_cloudiness_value)
+    @BindView(R.id.wid_tv_cloudiness_value)
     TextView mCloudiness;
-    @BindView(R.id.awd_tv_wind_speed_value)
+    @BindView(R.id.wid_tv_wind_speed_value)
     TextView mWindSpeed;
-    @BindView(R.id.awd_tv_wind_deg_value)
+    @BindView(R.id.wid_tv_wind_deg_value)
     TextView mWindDegrees;
-    @BindView(R.id.awd_tv_pressure_value)
+    @BindView(R.id.wid_tv_pressure_value)
     TextView mPressure;
-    @BindView(R.id.awd_tv_ground_pressure_value)
+    @BindView(R.id.wid_tv_ground_pressure_value)
     TextView mGroundPressure;
-    @BindView(R.id.awd_tv_sea_pressure_value)
+    @BindView(R.id.wid_tv_sea_pressure_value)
     TextView mSeaPressure;
-    @BindView(R.id.awd_tv_time_calc_value)
+    @BindView(R.id.wid_tv_time_calc_value)
     TextView mCalcTime;
-    @BindView(R.id.awd_iv_image)
+    @BindView(R.id.wid_iv_image)
     ImageView mWeatherConditionIV;
-    @BindView(R.id.awd_gv_graph)
+    @BindView(R.id.wid_gv_graph)
     GraphView mWeatherGraphView;
 
+    public WeatherItemDetailFragment() {
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_details);
 
-        readBundleData();
+        Bundle bundle = getArguments();
+        mWeatherData = bundle.getParcelable("weather");
+        mWeatherGraphDataList = bundle.getParcelableArrayList("weather_graph_list");
+    }
 
-        ButterKnife.bind(this);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.weather_item_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ButterKnife.bind(view);
 
         setDetailsGraph();
 
@@ -94,15 +109,8 @@ public class WeatherItemDetailActivity extends Activity implements GraphView.MyG
         loadWeatherDetails();
     }
 
-    private void readBundleData() {
-        Bundle bundle = getIntent().getExtras();
-        mWeatherData = bundle.getParcelable(KEY_DETAILS_WEATHER);
-        mWeatherGraphDataList = bundle.getParcelableArrayList(KEY_DETAILS_WEATHER_GRAPH_LIST);
-    }
-
 
     private void loadWeatherDetails() {
-        if (mWeatherData == null && mWeatherData.timeOfCalculation != null) return;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
@@ -128,7 +136,7 @@ public class WeatherItemDetailActivity extends Activity implements GraphView.MyG
         mSeaPressure.setText(getResources().getString(R.string.details_pressure_x, mWeatherData.main.seaLevelPressure));
         mCalcTime.setText(mWeatherData.timeOfCalculation);
 
-        Glide.with(this).load(WeatherApiClient.getImageUrl(mWeatherData.weather.get(0).icon))
+        Glide.with(getContext()).load(WeatherApiClient.getImageUrl(mWeatherData.weather.get(0).icon))
                 .into(mWeatherConditionIV);
     }
 }

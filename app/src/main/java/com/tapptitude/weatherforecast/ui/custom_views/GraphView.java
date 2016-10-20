@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.custom_views;
+package com.tapptitude.weatherforecast.ui.custom_views;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.utils.WeatherDateUtils;
 import com.tapptitude.weatherforecast.utils.TemperatureColorPicker;
 

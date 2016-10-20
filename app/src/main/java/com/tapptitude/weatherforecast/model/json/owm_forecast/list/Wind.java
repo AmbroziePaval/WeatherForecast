@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.json.owm_forecast.list;
+package com.tapptitude.weatherforecast.model.json.owm_forecast.list;
 
 import android.os.Parcel;
 import android.os.Parcelable;

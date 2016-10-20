@@ -23,18 +23,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.tapptitude.weatherforecast.activities.LocationPickerActivity;
-import com.tapptitude.weatherforecast.fragments.WeatherItemListFragment;
-import com.tapptitude.weatherforecast.json.owm_current_weather.CurrentWeatherData;
+import com.tapptitude.weatherforecast.ui.activities.LocationPickerActivity;
+import com.tapptitude.weatherforecast.ui.fragments.WeatherItemListFragment;
+import com.tapptitude.weatherforecast.model.MyWeatherLocation;
+import com.tapptitude.weatherforecast.model.json.owm_current_weather.CurrentWeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiInterface;
-import com.tapptitude.weatherforecast.sql.MyLocation;
-import com.tapptitude.weatherforecast.sql.PreviousLocationDbHelper;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import io.realm.exceptions.RealmPrimaryKeyConstraintException;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,9 +46,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int NOTIFICATION_ID = 2;
     static final String STATE_LATITUDE = "latitude";
     static final String STATE_LONGITUDE = "longitude";
-    private PreviousLocationDbHelper mPreviousLocationDbHelper;
     private double mLongitude = 23.6006;
     private double mLatitude = 46.7595;
+
+    private Realm mRealm;
+    private PopupMenu mLocationPopupMenu;
+    private BroadcastReceiver mWeatherBroadcastReceiver;
 
     @BindView(R.id.am_b_refresh)
     Button mRefreshButton;
@@ -77,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.am_tv_wind_deg)
     TextView mWindDegTV;
 
-    private PopupMenu mLocationPopupMenu;
-    private BroadcastReceiver mWeatherBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +97,14 @@ public class MainActivity extends AppCompatActivity {
 
         loadOpenWeatherMapData();
         loadPresentWeatherData();
-        mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
+        loadRealm();
 
         setAutomaticWeatherUpdater();
+    }
+
+    private void loadRealm() {
+        Realm.init(this);
+        mRealm = Realm.getDefaultInstance();
     }
 
     private void setAutomaticWeatherUpdater() {
@@ -144,13 +151,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadPresentWeatherData() {
-        WeatherApiInterface weatherApiInterface = WeatherApiClient.getAPI();
+        final WeatherApiInterface weatherApiInterface = WeatherApiClient.getAPI();
         Call<CurrentWeatherData> call = weatherApiInterface.getCurrentWeatherData(mLatitude, mLongitude, "metric", getResources().getString(R.string.API_KEY));
         call.enqueue(new Callback<CurrentWeatherData>() {
             @Override
             public void onResponse(Call<CurrentWeatherData> call, Response<CurrentWeatherData> response) {
-                CurrentWeatherData currentWeatherData = response.body();
-                mPreviousLocationDbHelper.insertLocation(currentWeatherData.cityName, String.valueOf(mLongitude), String.valueOf(mLatitude));
+                final CurrentWeatherData currentWeatherData = response.body();
+//                mPreviousLocationDbHelper.insertLocation(currentWeatherData.cityName, String.valueOf(mLongitude), String.valueOf(mLatitude));
+                mRealm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        try {
+                            MyWeatherLocation weatherLocation = mRealm.createObject(MyWeatherLocation.class, currentWeatherData.cityName);
+                            weatherLocation.setLatitude(mLatitude);
+                            weatherLocation.setLongitude(mLongitude);
+                        } catch (RealmPrimaryKeyConstraintException ignored) {
+                            Log.i(TAG, "Location already exists in the db.");
+                        }
+
+                    }
+                });
                 loadNotificationWeatherData(currentWeatherData);
 
                 mTempTV.setText(getResources().getString(R.string.details_temperature_x, (int) Math.round(currentWeatherData.main.temp)));
@@ -239,9 +259,9 @@ public class MainActivity extends AppCompatActivity {
                 mLocationPopupMenu.getMenuInflater().inflate(R.menu.popup_menu_location, mLocationPopupMenu.getMenu());
                 mLocationPopupMenu.getMenu().clear();
 
-                final List<MyLocation> previousLocations = mPreviousLocationDbHelper.getPreviousLocations();
-                for (MyLocation myLocation : previousLocations) {
-                    mLocationPopupMenu.getMenu().add(Menu.NONE, (int) myLocation.id, Menu.NONE, myLocation.name);
+                final List<MyWeatherLocation> previousLocations = mRealm.where(MyWeatherLocation.class).findAll();
+                for (int i = 0; i < previousLocations.size(); i++) {
+                    mLocationPopupMenu.getMenu().add(Menu.NONE, i, Menu.NONE, previousLocations.get(i).getCityName());
                 }
 
                 mLocationPopupMenu.setOnDismissListener(new PopupMenu.OnDismissListener() {
@@ -254,10 +274,10 @@ public class MainActivity extends AppCompatActivity {
                 mLocationPopupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
                         Toast.makeText(MainActivity.this, getString(R.string.main_selected_location_x, item.getTitle()), Toast.LENGTH_SHORT).show();
-                        for (MyLocation myLocation : previousLocations) {
-                            if (myLocation.name.equals(item.getTitle())) {
-                                mLatitude = Double.parseDouble(myLocation.latitude);
-                                mLongitude = Double.parseDouble(myLocation.longitude);
+                        for (MyWeatherLocation location : previousLocations) {
+                            if (location.getCityName().equals(item.getTitle())) {
+                                mLatitude = location.getLatitude();
+                                mLongitude = location.getLongitude();
                                 loadOpenWeatherMapData();
                                 loadPresentWeatherData();
                             }

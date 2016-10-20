@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.json.owm_forecast.city;
+package com.tapptitude.weatherforecast.model.json.owm_forecast.city;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.json.owm_current_weather;
+package com.tapptitude.weatherforecast.model.json.owm_current_weather;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,11 +1,7 @@
 package com.tapptitude.weatherforecast.adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,13 +12,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.tapptitude.weatherforecast.R;
-import com.tapptitude.weatherforecast.activities.WeatherItemDetailActivity;
-import com.tapptitude.weatherforecast.fragments.WeatherItemDetailFragment;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.utils.TemperatureColorPicker;
 import com.tapptitude.weatherforecast.utils.WeatherDateUtils;
-import com.tapptitude.weatherforecast.custom_views.GraphView;
+import com.tapptitude.weatherforecast.ui.custom_views.GraphView;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.tapptitude.weatherforecast.fragments;
+package com.tapptitude.weatherforecast.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,10 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tapptitude.weatherforecast.R;
-import com.tapptitude.weatherforecast.activities.WeatherItemDetailActivity;
+import com.tapptitude.weatherforecast.ui.activities.WeatherItemDetailActivity;
 import com.tapptitude.weatherforecast.adapters.WeatherContentAdapter;
-import com.tapptitude.weatherforecast.json.owm_forecast.ForecastWeatherData;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherData;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.ForecastWeatherData;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherData;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiClient;
 import com.tapptitude.weatherforecast.retrofit.WeatherApiInterface;
 import com.tapptitude.weatherforecast.utils.WeatherDateUtils;

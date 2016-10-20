@@ -1,11 +1,11 @@
-package com.tapptitude.weatherforecast.json.owm_current_weather;
+package com.tapptitude.weatherforecast.model.json.owm_current_weather;
 
 import com.google.gson.annotations.SerializedName;
-import com.tapptitude.weatherforecast.json.owm_forecast.city.Coord;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.Clouds;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherInfo;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.WeatherMain;
-import com.tapptitude.weatherforecast.json.owm_forecast.list.Wind;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.city.Coord;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.Clouds;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherInfo;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.WeatherMain;
+import com.tapptitude.weatherforecast.model.json.owm_forecast.list.Wind;
 
 import java.util.List;
 
