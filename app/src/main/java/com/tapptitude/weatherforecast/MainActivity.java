@@ -44,7 +44,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final int PICK_LOCATION_CODE = 1;
+    private static final int PICK_LOCATION_RESULT_CODE = 1;
     private static final int NOTIFICATION_ID = 2;
     static final String STATE_LATITUDE = "latitude";
     static final String STATE_LONGITUDE = "longitude";
@@ -104,8 +104,6 @@ public class MainActivity extends AppCompatActivity {
         mPreviousLocationDbHelper = new PreviousLocationDbHelper(this);
 
         setAutomaticWeatherUpdater();
-        UpdateWeatherBR.startUpdater(this);
-        registerReceiver(mWeatherBroadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
     }
 
     private void setAutomaticWeatherUpdater() {
@@ -116,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(context, getString(R.string.main_weather_updated), Toast.LENGTH_SHORT).show();
             }
         };
+        registerReceiver(mWeatherBroadcastReceiver, new IntentFilter("UPDATE_WEATHER"));
+        UpdateWeatherBR.startUpdater(this);
     }
 
     @Override
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_LOCATION_CODE) {
+        if (requestCode == PICK_LOCATION_RESULT_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 double latitude = data.getDoubleExtra(LocationPickerActivity.KEY_LOCATION_LATITUDE, 0);
                 double longitude = data.getDoubleExtra(LocationPickerActivity.KEY_LOCATION_LONGITUDE, 0);
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent pickLocationIntent = new Intent(v.getContext(), LocationPickerActivity.class);
                 pickLocationIntent.putExtras(bundle);
 
-                startActivityForResult(pickLocationIntent, PICK_LOCATION_CODE);
+                startActivityForResult(pickLocationIntent, PICK_LOCATION_RESULT_CODE);
             }
         });
 
