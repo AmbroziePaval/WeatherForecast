@@ -92,7 +92,7 @@ public class WeatherItemDetailFragment extends Fragment implements GraphView.MyG
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ButterKnife.bind(view);
+        ButterKnife.bind(this, view);
 
         setDetailsGraph();
 
