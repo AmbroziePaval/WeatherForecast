@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tapptitude.weatherforecast.MainActivity;
 import com.tapptitude.weatherforecast.R;
 import com.tapptitude.weatherforecast.ui.activities.WeatherItemDetailActivity;
 import com.tapptitude.weatherforecast.adapters.WeatherContentAdapter;
@@ -63,7 +64,7 @@ public class WeatherItemListFragment extends Fragment implements WeatherContentA
 
     private void loadOpenWeatherMapData(double latitude, double longitude){
         WeatherApiInterface weatherApiInterface = WeatherApiClient.getAPI();
-        Call<ForecastWeatherData> call = weatherApiInterface.getOpenWeatherData(latitude, longitude, "metric", getResources().getString(R.string.API_KEY));
+        Call<ForecastWeatherData> call = weatherApiInterface.getOpenWeatherData(latitude, longitude, MainActivity.DEFAULT_WEATHER_DATA_UNITS, getResources().getString(R.string.API_KEY));
         call.enqueue(new Callback<ForecastWeatherData>() {
             @Override
             public void onResponse(Call<ForecastWeatherData> call, Response<ForecastWeatherData> response) {

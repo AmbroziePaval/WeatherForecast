@@ -30,6 +30,8 @@ import butterknife.ButterKnife;
  * Created by ambroziepaval on 10/6/16.
  */
 public class WeatherItemDetailFragment extends Fragment implements GraphView.MyGraphViewListener{
+    public static final String KEY_DETAILS_WEATHER = "KEY_DETAILS_WEATHER";
+    public static final String KEY_DETAILS_WEATHER_GRAPH_LIST = "KEY_DETAILS_WEATHER_GRAPH_LIST";
     private WeatherData mWeatherData;
     private ArrayList<WeatherData> mWeatherGraphDataList;
 
@@ -76,8 +78,8 @@ public class WeatherItemDetailFragment extends Fragment implements GraphView.MyG
         super.onCreate(savedInstanceState);
 
         Bundle bundle = getArguments();
-        mWeatherData = bundle.getParcelable("weather");
-        mWeatherGraphDataList = bundle.getParcelableArrayList("weather_graph_list");
+        mWeatherData = bundle.getParcelable(KEY_DETAILS_WEATHER);
+        mWeatherGraphDataList = bundle.getParcelableArrayList(KEY_DETAILS_WEATHER_GRAPH_LIST);
     }
 
     @Nullable

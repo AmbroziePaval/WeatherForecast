@@ -87,8 +87,8 @@ public class WeatherItemDetailActivity extends Activity implements GraphView.MyG
     }
 
     @Override
-    public void onGraphItemClickListener(WeatherData weatherData) {
-        mWeatherData = weatherData;
+    public void onGraphItemClickListener(WeatherData clickedWeatherData) {
+        mWeatherData = clickedWeatherData;
         loadWeatherDetails();
     }
 

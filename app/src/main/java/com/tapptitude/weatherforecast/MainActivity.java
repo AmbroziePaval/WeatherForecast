@@ -42,6 +42,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String DEFAULT_WEATHER_DATA_UNITS = "metric";
     private static final int PICK_LOCATION_RESULT_CODE = 1;
     private static final int NOTIFICATION_ID = 2;
     static final String STATE_LATITUDE = "latitude";
@@ -152,12 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadPresentWeatherData() {
         final WeatherApiInterface weatherApiInterface = WeatherApiClient.getAPI();
-        Call<CurrentWeatherData> call = weatherApiInterface.getCurrentWeatherData(mLatitude, mLongitude, "metric", getResources().getString(R.string.API_KEY));
+        Call<CurrentWeatherData> call = weatherApiInterface.getCurrentWeatherData(mLatitude, mLongitude, DEFAULT_WEATHER_DATA_UNITS, getResources().getString(R.string.API_KEY));
         call.enqueue(new Callback<CurrentWeatherData>() {
             @Override
             public void onResponse(Call<CurrentWeatherData> call, Response<CurrentWeatherData> response) {
                 final CurrentWeatherData currentWeatherData = response.body();
-//                mPreviousLocationDbHelper.insertLocation(currentWeatherData.cityName, String.valueOf(mLongitude), String.valueOf(mLatitude));
                 mRealm.executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {

@@ -105,7 +105,7 @@ public class WeatherContentAdapter extends RecyclerView.Adapter<WeatherContentAd
         @BindView(R.id.wic_gv_graph)
         GraphView mGraphView;
 
-        public WeatherContentViewHolder(View itemView) {
+        WeatherContentViewHolder(View itemView) {
             super(itemView);
 
             ButterKnife.bind(this, itemView);
